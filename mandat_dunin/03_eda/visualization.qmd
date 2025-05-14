@@ -1,0 +1,12 @@
+---
+title: "Visualisation des données"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Visualisation des données
+
+*Contenu à compléter...*
+

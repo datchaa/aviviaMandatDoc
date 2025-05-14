@@ -1,0 +1,12 @@
+---
+title: "Accueil"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Accueil
+
+*Contenu à compléter...*
+

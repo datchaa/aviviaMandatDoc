@@ -1,0 +1,12 @@
+---
+title: "Entrepôt de données"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Entrepôt de données
+
+*Contenu à compléter...*
+

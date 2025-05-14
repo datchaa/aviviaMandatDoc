@@ -1,0 +1,12 @@
+---
+title: "Kits"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Kits
+
+*Contenu à compléter...*
+

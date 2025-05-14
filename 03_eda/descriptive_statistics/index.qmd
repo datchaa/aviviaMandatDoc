@@ -1,0 +1,18 @@
+# **Analyse descriptive**
+
+## Introduction
+
+Cette section présente les statistiques descriptives des différentes entités analysées dans le projet: projet , ingenerie , documents.
+
+## Méthodologie
+
+Statitstique descriptive univariée , bivariée et multivariée .
+
+## Structure de cette section
+
+Cette section est divisée en plusieurs sous-sections, chacune se concentsrant sur une entité spécifique:
+
+1.  **documents (commandes , contrats )** : Analyse des commandes et contrats, volumes, tendances temporelles, etc.
+2.  **Projet(Clients, AdresseCivque, Marche )** : Analyse des clients, segmentation, comportements, etc.
+3.  **Ingenerie(Kit)** : Analyse des kits, compositions, popularité, etc.
+4.  **Synthèse**: Vue d'ensemble et synthèse des statistiques descriptives.

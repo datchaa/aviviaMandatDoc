@@ -1,0 +1,22 @@
+# ETL & Architecture
+
+## Introduction
+
+Ce chapitre détaille l'architecture ETL (Extract, Transform, Load) mise en place pour ce projet. Il présente les sources de données, les flux de traitement, les schémas de données, le catalogue de données, l'entrepôt de données et la modélisation.
+
+## Aperçu de l'architecture
+
+```{r}
+#| echo: false
+#| fig-cap: "Architecture globale du système de données"
+#| label: fig-architecture
+
+# Ici vous pouvez ajouter du code pour générer un diagramme d'architecture
+# Par exemple avec DiagrammeR ou en important une image
+```
+
+\[Description de l'architecture globale du système de données\]
+
+## Choix technologiques
+
+\[Présentation des technologies et outils utilisés pour l'ETL et pourquoi ces choix ont été faits\]

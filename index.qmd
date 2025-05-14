@@ -1,0 +1,16 @@
+# Préface {.unnumbered}
+
+Bienvenue dans le projet "Mandat dunin". Ce document présente l'ensemble du travail réalisé pour analyser les données, créer une architecture de données robuste, et développer une application finale.
+
+## Présentation du projet {.unnumbered}
+
+Ce projet vise à mettre en place une solution d'analyse automatisée des données de vente afin d'identifier les tendances clés et les opportunités d'amélioration de la performance commerciale..
+
+## Structure du document {.unnumbered}
+
+Ce document est organisé en plusieurs parties:
+
+1.  **Contexte et projet**: Présentation du contexte, des objectifs et de la méthodologie.
+2.  **Collecte et Analyse exploratoire (EDA)** des donnés :Statistiques descriptives, visualisations et analyse des relations entre les variables.
+3.  **Analyse avancées**: Techniques d'analyse avancées appliquées aux données.
+4.  **Mise en oeuvre des tableaux de bords** : Présentation de l'application développée à partir des analyses.

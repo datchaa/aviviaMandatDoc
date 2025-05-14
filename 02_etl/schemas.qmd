@@ -1,0 +1,45 @@
+# Schémas de données
+
+Ce chapitre présente les schémas de données utilisés dans le projet.
+
+## Schémas des données sources
+
+\[Description des schémas des données sources\]
+
+```{r}
+#| echo: false
+
+# Exemple de code pour afficher un schéma de données source
+# Vous pouvez remplacer cela par des diagrammes ou des tableaux décrivant vos schémas
+```
+
+## Schémas des données transformées
+
+\[Description des schémas des données après transformation\]
+
+```{r}
+#| echo: false
+
+# Exemple de code pour afficher un schéma de données transformées
+```
+
+## Mappings entre schémas
+
+\[Description des mappings entre les schémas sources et les schémas cibles\]
+
+```{r}
+#| echo: false
+
+# Tableau de mapping entre schémas sources et cibles
+mapping_data <- data.frame(
+  Source = c("Champ source 1", "Champ source 2", "Champ source 3"),
+  Destination = c("Champ destination 1", "Champ destination 2", "Champ destination 3"),
+  Transformation = c("Transformation appliquée 1", "Transformation appliquée 2", "Transformation appliquée 3")
+)
+
+knitr::kable(mapping_data, caption = "Mapping entre schémas sources et cibles")
+```
+
+## Évolution des schémas
+
+\[Description de la stratégie de gestion de l'évolution des schémas\]

@@ -1,0 +1,12 @@
+---
+title: "Modélisation des données"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Modélisation des données
+
+*Contenu à compléter...*
+

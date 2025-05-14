@@ -1,0 +1,48 @@
+# Flux de données
+
+Ce chapitre décrit les flux de données du système, de l'extraction jusqu'au chargement dans l'entrepôt de données.
+
+## Vue d'ensemble des flux
+
+```{r}
+#| echo: false
+#| fig-cap: "Diagramme des flux de données"
+#| label: fig-data-flow
+
+# Ici vous pouvez ajouter du code pour générer un diagramme de flux
+# Par exemple avec DiagrammeR
+```
+
+\[Description générale des flux de données\]
+
+## Processus d'extraction
+
+\[Description détaillée du processus d'extraction des données depuis les sources\]
+
+## Processus de transformation
+
+\[Description détaillée des transformations appliquées aux données\]
+
+### Nettoyage des données
+
+\[Description des processus de nettoyage de données\]
+
+### Enrichissement des données
+
+\[Description des processus d'enrichissement de données\]
+
+### Agrégations
+
+\[Description des agrégations réalisées\]
+
+## Processus de chargement
+
+\[Description du processus de chargement des données dans l'entrepôt\]
+
+## Orchestration des flux
+
+\[Description de l'orchestration des différents flux de données\]
+
+## Gestion des erreurs et reprises
+
+\[Description de la gestion des erreurs et des mécanismes de reprise\]

@@ -1,0 +1,50 @@
+# Entrepôt de données
+
+Ce chapitre présente l'entrepôt de données mis en place pour le projet.
+
+## Architecture de l'entrepôt
+
+```{r}
+#| echo: false
+#| fig-cap: "Architecture de l'entrepôt de données"
+#| label: fig-warehouse-architecture
+
+# Ici vous pouvez ajouter du code pour générer un diagramme d'architecture
+# Par exemple avec DiagrammeR ou en important une image
+```
+
+\[Description de l'architecture de l'entrepôt de données\]
+
+## Couches de l'entrepôt
+
+### Zone de staging
+
+\[Description de la zone de staging\]
+
+### Zone de données brutes
+
+\[Description de la zone de données brutes\]
+
+### Zone de données transformées
+
+\[Description de la zone de données transformées\]
+
+### Zone de données restituées
+
+\[Description de la zone de données restituées (data marts)\]
+
+## Infrastructure et technologies
+
+\[Description de l'infrastructure et des technologies utilisées pour l'entrepôt de données\]
+
+## Performances et optimisation
+
+\[Description des aspects liés aux performances et à l'optimisation de l'entrepôt\]
+
+## Sécurité et accès
+
+\[Description des aspects liés à la sécurité et à la gestion des accès\]
+
+## Stratégie de purge et d'archivage
+
+\[Description de la stratégie de purge et d'archivage des données\]

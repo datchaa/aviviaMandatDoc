@@ -1,0 +1,71 @@
+# Analyse des contrats
+
+Ce chapitre présente une analyse descriptive des contrats.
+
+## Vue d'ensemble des contrats
+
+```{r}
+#| echo: false
+
+```
+
+## Distribution des contrats par valeur
+
+```{r}
+#| echo: false
+#| fig-cap: "Distribution des contrats par valeur"
+#| label: fig-contracts-value
+
+# Exemple de code pour générer un histogramme des valeurs des contrats
+# ggplot(contracts, aes(x = value)) +
+#   geom_histogram(binwidth = 500, fill = "lightsalmon", color = "black") +
+#   labs(x = "Valeur du contrat (€)", y = "Nombre de contrats") +
+#   theme_minimal()
+```
+
+\[Analyse de la distribution des contrats par valeur\]
+
+## Types de contrats
+
+```{r}
+#| echo: false
+#| fig-cap: "Répartition des types de contrats"
+#| label: fig-contracts-type
+
+# Exemple de code pour générer un graphique en barres des types de contrats
+# contracts_by_type <- contracts %>%
+#   group_by(type) %>%
+#   summarise(count = n()) %>%
+#   arrange(desc(count))
+# 
+# ggplot(contracts_by_type, aes(x = reorder(type, -count), y = count)) +
+#   geom_bar(stat = "identity", fill = "lightsalmon") +
+#   labs(x = "Type de contrat", y = "Nombre de contrats") +
+#   theme_minimal() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+\[Analyse de la répartition des types de contrats\]
+
+## Durée des contrats
+
+```{r}
+
+#   theme_minimal()
+```
+
+\[Analyse de la distribution de la durée des contrats\]
+
+## Évolution temporelle des contrats
+
+```{r}
+
+```
+
+\[Analyse de l'évolution temporelle des contrats\]
+
+\[Analyse des taux de renouvellement et d'attrition\]
+
+## Synthèse de l'analyse des contrats
+
+\[Synthèse des principales observations et conclusions concernant les contrats\]

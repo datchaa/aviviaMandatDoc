@@ -1,0 +1,42 @@
+# Sources de données
+
+Ce chapitre présente les différentes sources de données utilisées dans le projet.
+
+## Vue d'ensemble des sources
+
+```{r}
+#| echo: false
+
+# Création d'un tableau récapitulatif des sources de données
+sources_data <- data.frame(
+  Source = c("Source 1", "Source 2", "Source 3"),
+  Type = c("Base de données SQL", "API REST", "Fichiers CSV"),
+  Description = c("Description source 1", "Description source 2", "Description source 3"),
+  Volumétrie = c("XX Go", "YY Go", "ZZ Go"),
+  Fréquence = c("Quotidienne", "Temps réel", "Mensuelle")
+)
+
+knitr::kable(sources_data, caption = "Vue d'ensemble des sources de données")
+```
+
+## Description détaillée des sources
+
+### Source 1
+
+\[Description détaillée de la source 1, son format, sa structure, etc.\]
+
+### Source 2
+
+\[Description détaillée de la source 2, son format, sa structure, etc.\]
+
+### Source 3
+
+\[Description détaillée de la source 3, son format, sa structure, etc.\]
+
+## Qualité des données sources
+
+\[Évaluation de la qualité des données sources: complétude, exactitude, cohérence, etc.\]
+
+## Stratégie d'extraction
+
+\[Description de la stratégie d'extraction pour chaque source de données\]

@@ -1,0 +1,12 @@
+---
+title: "Analyse exploratoire (EDA)"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Analyse exploratoire (EDA)
+
+*Contenu à compléter...*
+

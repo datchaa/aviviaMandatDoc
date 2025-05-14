@@ -1,0 +1,12 @@
+---
+title: "Contexte du projet"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Contexte du projet
+
+*Contenu à compléter...*
+

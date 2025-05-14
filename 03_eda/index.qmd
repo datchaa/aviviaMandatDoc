@@ -1,0 +1,15 @@
+# Analyse exploratoire des données (EDA)
+
+## Introduction
+
+Ce chapitre présente l'analyse exploratoire des données réalisée dans le cadre du projet. Il comprend des statistiques descriptives, des visualisations et une analyse des relations entre les variables.
+
+## Structure du chapitre
+
+Ce chapitre est organisé en plusieurs sections:
+
+1.  **Collecte et Préparation des données**
+
+2.  **Analyse descriptive** : Analyse détaillée des commandes, contrats et kits , clients.
+
+3.  **Visualisations**: Représentations graphiques des données pour identifier les tendances et les patterns.

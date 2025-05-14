@@ -1,0 +1,12 @@
+---
+title: "Contrats"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Contrats
+
+*Contenu à compléter...*
+

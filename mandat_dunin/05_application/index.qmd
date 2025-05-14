@@ -1,0 +1,12 @@
+---
+title: "Application finale"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Application finale
+
+*Contenu à compléter...*
+

@@ -1,0 +1,29 @@
+# Catalogue de données
+
+Ce chapitre présente le catalogue de données du projet.
+
+## Objectifs du catalogue
+
+\[Description des objectifs du catalogue de données\]
+
+## Structure du catalogue
+
+\[Description de la structure du catalogue de données\]
+
+## Tables principales
+
+
+## Dictionnaire de données
+
+### Table 1
+
+
+### Table 2
+
+## Lignée des données
+
+\[Description de la lignée des données: d'où proviennent-elles, comment sont-elles transformées, etc.\]
+
+## Gouvernance des données
+
+\[Description des processus de gouvernance des données\]

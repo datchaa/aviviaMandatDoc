@@ -1,0 +1,12 @@
+---
+title: "Statistiques descriptives"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Statistiques descriptives
+
+*Contenu à compléter...*
+

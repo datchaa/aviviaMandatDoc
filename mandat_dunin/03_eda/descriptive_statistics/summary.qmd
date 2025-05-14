@@ -1,0 +1,12 @@
+---
+title: "Résumé des statistiques"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Résumé des statistiques
+
+*Contenu à compléter...*
+

@@ -1,0 +1,12 @@
+---
+title: "Flux de données"
+format:
+  html: default
+  pdf: default
+editor: visual
+---
+
+# Flux de données
+
+*Contenu à compléter...*
+

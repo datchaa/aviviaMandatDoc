@@ -1,0 +1,57 @@
+# Modélisation
+
+Ce chapitre présente la modélisation des données mise en place pour le projet.
+
+## Approche de modélisation
+
+\[Description de l'approche de modélisation adoptée (dimensionnelle, Data Vault, etc.)\]
+
+## Modèle conceptuel
+
+```{r}
+#| echo: false
+#| fig-cap: "Modèle conceptuel de données"
+#| label: fig-conceptual-model
+
+# Ici vous pouvez ajouter du code pour générer un diagramme de modèle conceptuel
+# Par exemple avec DiagrammeR ou en important une image
+```
+
+\[Description du modèle conceptuel de données\]
+
+## Modèle logique
+
+```{r}
+#| echo: false
+#| fig-cap: "Modèle logique de données"
+#| label: fig-logical-model
+
+# Ici vous pouvez ajouter du code pour générer un diagramme de modèle logique
+# Par exemple avec DiagrammeR ou en important une image
+```
+
+\[Description du modèle logique de données\]
+
+## Tables de faits
+
+\[Description des tables de faits\]
+
+```{r}
+```
+
+## Tables de dimensions
+
+\[Description des tables de dimensions\]
+
+```{r}
+#| echo: false
+
+```
+
+## Gestion des dimensions à évolution lente (SCD)
+
+\[Description de la stratégie de gestion des dimensions à évolution lente\]
+
+## Hiérarchies
+
+\[Description des hiérarchies dans les dimensions\]

@@ -1,0 +1,149 @@
+# Colllecte et Préparation des données
+
+## Sources et méthodes de collecte des données
+
+```{r}
+#| echo: false
+
+# Création d'un tableau récapitulatif des sources de données
+sources_data <- data.frame(
+  Source = c("avivia database"),
+  Type = c("Base de données SQL" ),
+  Description = c("Base de donnée transactionnel des activités de ventes"),
+  Methode_de_collecte = c(" Via la plateforme Eve "),
+  Volumétrie = c("8 Go" ),
+  Fréquence = c("Temps réel")
+)
+
+knitr::kable(sources_data, caption = "Vue d'ensemble des sources de données")
+```
+
+## Nettoyage et prétraitement des données
+
+connexion et vue d'ensemble de la base de données
+
+```{r}
+library(DBI)
+library(odbc)
+
+conn <- dbConnect(odbc(), .connection_string = "Driver={ODBC Driver 18 for SQL Server};", 
+            Server = "server-sql-dunin-eve.database.windows.net", Database = "AviviaEve_Copy", 
+            UID = "accesAviviaData", PWD = "Citric&Private&Designed&Maturity1&Cloning")
+
+
+# selectionner les noms des tables 
+print(DBI::dbListTables(conn,schema="dbo"))
+
+
+
+
+```
+
+les informations de la base de données sont principalement contenues dans trois tables principales : ProjetEW, CommEW et ContratEW.
+
+```{r}
+
+library(dplyr)
+
+#acces aux tables  sans chargement en memoire
+GetLazyDBAccess <- function(conn,tables){
+  lazyDb <- lapply(tables, function(tbl_name) {
+    tbl(conn, tbl_name) # Accesses each table from the connection
+  })
+  lazyDb
+}
+
+mainTables <- c("CommEW","ContratEW","ProjetEW")
+AviviaDBData <- GetLazyDBAccess(conn,mainTables)
+names(AviviaDBData) <- mainTables
+
+
+
+print(AviviaDBData |> names())
+```
+
+### table commandes
+
+```{r}
+AviviaDBData$CommEW |> glimpse()
+```
+
+### table contrat
+
+```{r}
+AviviaDBData$ContratEW |> glimpse()
+```
+
+### table projet
+
+```{r}
+AviviaDBData$ProjetEW |> glimpse()
+```
+
+Après une analyse des champs des différentes tables, nous avons choisi de nous concentrer sur ceux contenant des fichiers XML notemment : ***`DocumXML`*****, *`EveXML`*** et *`ProjetXML`* . Ces derniers non seulement synthétisent les informations de chaque table, mais renferment également davantage de données pertinentes et intéressantes.
+
+appercu d'un fichier DocumXML
+
+```{r}
+library(xml2)
+
+AviviaDBData$CommEW |> head(1) |> pull(DocumXML) |> as_xml_document() |> print()
+
+```
+
+## Transformation et enrichissement des données
+
+### structure de fichier xml
+
+exemple de la structure des fichiers xmls ( ils ont ensemble fondemmentalement la meme structure )
+
+```{r}
+
+
+AviviaDBData$CommEW |> head(1) |> pull(DocumXML) |> as_xml_document() |> xml_structure()
+```
+
+### extractions des information et tables potentielles des différents fichiers xmls
+
+#### fichiers DocumXML et EveXML de la table CommEW (commandes)
+
+```{r}
+ load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+ #
+ commandes |> names()
+```
+
+#### fichiers DocumXML et EveXML de la table ContratEW (contrats)
+
+```{r}
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
+ #
+ contrats |> names()
+```
+
+#### fichiers ProjetXML de la table ProjetEw (projets)
+
+```{r}
+ load("C:/Users/datch/Desktop/aviviaMandatDoc/data/projets.RData")
+ #
+ projets |> names()
+```
+
+### diagrammmes de  sélection des entités pour l'analyse
+
+```{mermaid}
+graph TD
+    Projet -->|contient| AdrCivique
+    Projet -->|contient| Client
+    Projet -->|contient| Marche
+
+    Ingenerie -->|contient| Kit
+
+    Document -->|lié à| Commandes
+    Document -->|lié à| Contrat
+ Ingenerie --> Document
+    Projet --> Document
+   
+
+```
+
