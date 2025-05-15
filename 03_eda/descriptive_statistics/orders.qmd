@@ -4,7 +4,7 @@ Ce chapitre présente une analyse descriptive des commandes.
 
 ## Vue d'ensemble des commandes et préparations des données
 
-### Résumé de la  table
+### Résumé de la table
 
 ```{r}
 library(dplyr)
@@ -24,10 +24,8 @@ TableCommande |> glimpse () # afficher le résumé de la table
  
 ```
 
-
-
-
 ### selections des variables ( colonnes pertinentes)
+
 ```{r}
 
 variables_utiles <- c(
@@ -43,13 +41,13 @@ variables_utiles <- c(
 )
 
 
-TableCommande <-  TableCommande[,variables_utiles]
+TableCommande <- TableCommande[,variables_utiles]
 
 TableCommande |> glimpse()
 ```
 
-
 ### Conversion des colones dans des types de variables appropriés
+
 ```{r}
 library(dplyr)
 library(stringr)
@@ -104,18 +102,77 @@ TableCommande_cleaned |> glimpse()
   
 ```
 
-
-### Gestion des valeurs manquantes 
+### Gestion des valeurs manquantes ( NA )
 
 ```{r}
-library(questionr)
-
-look_for(TableCommande_cleaned)
+library(naniar)
+library(ggplot2)
 ```
 
+#### variables quantitatives
+
+##### graphe
+
+```{r}
+varsQuantitativeCommandes <- TableCommande_cleaned |> select(where(is.numeric))
+
+# visualer le taux des valeurs manquantes par variable
+
+# graphe 1
+gg_miss_var(varsQuantitativeCommandes,show_pct = TRUE) + labs(title = " Graphe de visualisation de valeurs manquantes : variables quatitatives ", x = "variables" , y = "Pourcentage de valeurs manquantes (%)" ) + theme_minimal()
+
+# graphe 2
+naniar::vis_miss(varsQuantitativeCommandes) + labs(
+  title = "représentation de la structure des colonnes où les données sont absentes.", y = "obserations", x = "colonnes"
+)
 
 
+# suppression des variable avec plus 50% de valeurs manquantes totalinstall , total livraison
+varsQuantitativeCommandes <- varsQuantitativeCommandes |> 
+  mutate(totallivraison =NULL,totalinstall =NULL) |> 
+  arrange(qteitems) # ordonner de la plus petite à la plus grande quantite items pour la suite
 
+```
+
+##### Vérification MCAR (Missing Completely at Random) :
+
+[**Rappel**]{.underline} :
+
+-   MCAR (Missing Completely at Random) signifie que l'absence de données est complètement aléatoire et n'est liée à aucune autre caractéristique ou variable de l'ensemble de données. [voir plus ...](https://www.tandfonline.com/doi/abs/10.1080/01621459.1988.10478722)
+
+-   **Test de Litte** :
+
+    1.  Une p-valeur élevée (\> 0.05) indique que les données sont probablement MCAR.
+
+    2.  Une p-valeur faible (\< 0.05) suggère que les données sont MAR (Missing At Random) ou MNAR (Missing Not At Random)
+
+```{r}
+
+LittLeTestResultat <- mcar_test(varsQuantitativeCommandes)
+LittLeTestResultat |> print()
+
+```
+
+conclusion : l'absence de données est liée aux caractéristiques ou variables de l'ensemble de données
+
+##### solution d'imputation de valeurs k-nearest neighbors (knn) :
+
+Pour chaque observation avec des valeurs manquantes, identifier les k observations les plus proches parmi celles qui ont des valeurs complètes pour les variables concernées. Utiliser les valeurs des voisins (la moyenne (ou la médiane)) pour imputer la valeur manquante :
+
+```{r}
+library(VIM)
+result <- kNN(varsQuantitativeCommandes,k=7)
+varsQuantitativeCommandes <-   result[, 1:ncol(varsQuantitativeCommandes)]
+
+# graphe 2
+naniar::vis_miss(varsQuantitativeCommandes) + labs(
+  title = "représentation de la structure des colonnes où les données sont absentes.", y = "obserations", x = "colonnes"
+)
+
+# resumé statistique des différentes colones 
+varsQuantitativeCommandes |> summary()
+
+```
 
 ## Distribution des commandes par montant
 

@@ -2,26 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.dunin.com/index.html</loc>
-    <lastmod>2025-05-14T10:00:39.481Z</lastmod>
+    <lastmod>2025-05-14T11:27:03.339Z</lastmod>
   </url>
   <url>
     <loc>https://www.dunin.com/01_project_context/index.html</loc>
-    <lastmod>2025-05-14T06:34:01.020Z</lastmod>
+    <lastmod>2025-05-14T11:27:02.674Z</lastmod>
   </url>
   <url>
     <loc>https://www.dunin.com/03_eda/index.html</loc>
-    <lastmod>2025-05-14T09:48:28.154Z</lastmod>
+    <lastmod>2025-05-15T12:10:42.086Z</lastmod>
   </url>
   <url>
     <loc>https://www.dunin.com/03_eda/data_preparation.html</loc>
-    <lastmod>2025-05-14T09:40:58.895Z</lastmod>
+    <lastmod>2025-05-14T11:27:02.681Z</lastmod>
   </url>
   <url>
     <loc>https://www.dunin.com/03_eda/descriptive_statistics/index.html</loc>
-    <lastmod>2025-05-14T11:18:54.194Z</lastmod>
+    <lastmod>2025-05-15T12:11:29.957Z</lastmod>
   </url>
   <url>
     <loc>https://www.dunin.com/03_eda/descriptive_statistics/orders.html</loc>
-    <lastmod>2025-05-14T11:17:49.163Z</lastmod>
+    <lastmod>2025-05-15T12:15:38.987Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.dunin.com/04_advanced_analysis/index.html</loc>
+    <lastmod>2025-05-14T11:27:02.694Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.dunin.com/05_application/index.html</loc>
+    <lastmod>2025-05-14T11:27:02.695Z</lastmod>
+  </url>
+  <url>
+    <loc>https://www.dunin.com/Mandat-dunin-.pdf</loc>
+    <lastmod>2025-05-14T11:33:49.753Z</lastmod>
   </url>
 </urlset>
