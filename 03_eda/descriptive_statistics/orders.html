@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../../03_eda/descriptive_statistics/index.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>Analyse descriptive</strong></span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>Analyses descriptives</strong></span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -251,7 +251,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#résumé-de-la-table" id="toc-résumé-de-la-table" class="nav-link" data-scroll-target="#résumé-de-la-table"><span class="header-section-number">5.1.1</span> Résumé de la table</a></li>
   <li><a href="#selections-des-variables-colonnes-pertinentes" id="toc-selections-des-variables-colonnes-pertinentes" class="nav-link" data-scroll-target="#selections-des-variables-colonnes-pertinentes"><span class="header-section-number">5.1.2</span> selections des variables ( colonnes pertinentes)</a></li>
   <li><a href="#conversion-des-colones-dans-des-types-de-variables-appropriés" id="toc-conversion-des-colones-dans-des-types-de-variables-appropriés" class="nav-link" data-scroll-target="#conversion-des-colones-dans-des-types-de-variables-appropriés"><span class="header-section-number">5.1.3</span> Conversion des colones dans des types de variables appropriés</a></li>
-  <li><a href="#gestion-des-valeurs-manquantes" id="toc-gestion-des-valeurs-manquantes" class="nav-link" data-scroll-target="#gestion-des-valeurs-manquantes"><span class="header-section-number">5.1.4</span> Gestion des valeurs manquantes</a></li>
+  <li><a href="#gestion-des-valeurs-manquantes-na" id="toc-gestion-des-valeurs-manquantes-na" class="nav-link" data-scroll-target="#gestion-des-valeurs-manquantes-na"><span class="header-section-number">5.1.4</span> Gestion des valeurs manquantes ( NA )</a></li>
   </ul></li>
   <li><a href="#distribution-des-commandes-par-montant" id="toc-distribution-des-commandes-par-montant" class="nav-link" data-scroll-target="#distribution-des-commandes-par-montant"><span class="header-section-number">5.2</span> Distribution des commandes par montant</a></li>
   <li><a href="#évolution-temporelle-des-commandes" id="toc-évolution-temporelle-des-commandes" class="nav-link" data-scroll-target="#évolution-temporelle-des-commandes"><span class="header-section-number">5.3</span> Évolution temporelle des commandes</a></li>
@@ -531,7 +531,7 @@ $ datelivraisoninstall         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>TableCommande <span class="ot">&lt;-</span>  TableCommande[,variables_utiles]</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>TableCommande <span class="ot">&lt;-</span> TableCommande[,variables_utiles]</span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>TableCommande <span class="sc">|&gt;</span> <span class="fu">glimpse</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -691,104 +691,138 @@ $ telephoneclient      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N
 </div>
 </div>
 </section>
-<section id="gestion-des-valeurs-manquantes" class="level3" data-number="5.1.4">
-<h3 data-number="5.1.4" class="anchored" data-anchor-id="gestion-des-valeurs-manquantes"><span class="header-section-number">5.1.4</span> Gestion des valeurs manquantes</h3>
+<section id="gestion-des-valeurs-manquantes-na" class="level3" data-number="5.1.4">
+<h3 data-number="5.1.4" class="anchored" data-anchor-id="gestion-des-valeurs-manquantes-na"><span class="header-section-number">5.1.4</span> Gestion des valeurs manquantes ( NA )</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(questionr)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">look_for</span>(TableCommande_cleaned)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(naniar)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="variables-quantitatives" class="level4" data-number="5.1.4.1">
+<h4 data-number="5.1.4.1" class="anchored" data-anchor-id="variables-quantitatives"><span class="header-section-number">5.1.4.1</span> variables quantitatives</h4>
+<section id="graphe" class="level5" data-number="5.1.4.1.1">
+<h5 data-number="5.1.4.1.1" class="anchored" data-anchor-id="graphe"><span class="header-section-number">5.1.4.1.1</span> graphe</h5>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>varsQuantitativeCommandes <span class="ot">&lt;-</span> TableCommande_cleaned <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="fu">where</span>(is.numeric))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co"># visualer le taux des valeurs manquantes par variable</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># graphe 1</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">gg_miss_var</span>(varsQuantitativeCommandes,<span class="at">show_pct =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">" Graphe de visualisation de valeurs manquantes : variables quatitatives "</span>, <span class="at">x =</span> <span class="st">"variables"</span> , <span class="at">y =</span> <span class="st">"Pourcentage de valeurs manquantes (%)"</span> ) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="orders_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># graphe 2</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>naniar<span class="sc">::</span><span class="fu">vis_miss</span>(varsQuantitativeCommandes) <span class="sc">+</span> <span class="fu">labs</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"représentation de la structure des colonnes où les données sont absentes."</span>, <span class="at">y =</span> <span class="st">"obserations"</span>, <span class="at">x =</span> <span class="st">"colonnes"</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="orders_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># suppression des variable avec plus 50% de valeurs manquantes totalinstall , total livraison</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>varsQuantitativeCommandes <span class="ot">&lt;-</span> varsQuantitativeCommandes <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">totallivraison =</span><span class="cn">NULL</span>,<span class="at">totalinstall =</span><span class="cn">NULL</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(qteitems) <span class="co"># ordonner de la plus petite à la plus grande quantite items pour la suite</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="vérification-mcar-missing-completely-at-random" class="level5" data-number="5.1.4.1.2">
+<h5 data-number="5.1.4.1.2" class="anchored" data-anchor-id="vérification-mcar-missing-completely-at-random"><span class="header-section-number">5.1.4.1.2</span> Vérification MCAR (Missing Completely at Random) :</h5>
+<p><u><strong>Rappel</strong></u> :</p>
+<ul>
+<li><p>MCAR (Missing Completely at Random) signifie que l’absence de données est complètement aléatoire et n’est liée à aucune autre caractéristique ou variable de l’ensemble de données. <a href="https://www.tandfonline.com/doi/abs/10.1080/01621459.1988.10478722">voir plus …</a></p></li>
+<li><p><strong>Test de Litte</strong> :</p>
+<ol type="1">
+<li><p>Une p-valeur élevée (&gt; 0.05) indique que les données sont probablement MCAR.</p></li>
+<li><p>Une p-valeur faible (&lt; 0.05) suggère que les données sont MAR (Missing At Random) ou MNAR (Missing Not At Random)</p></li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>LittLeTestResultat <span class="ot">&lt;-</span> <span class="fu">mcar_test</span>(varsQuantitativeCommandes)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>LittLeTestResultat <span class="sc">|&gt;</span> <span class="fu">print</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code> pos variable             label col_type missing values            
- 1   nomclient            —     fct      190     Abeldesign        
-                                                 ABrealt           
-                                                 ACloutier         
-                                                 ALaplante         
-                                                 Avivia            
-                                                 Base              
-                                                 BCA Cuisine       
-                                                 belinterieur      
-                                                 ClientWeb         
-                                                 CRobitaille       
-                                                 DuninTest         
-                                                 GroupeNova        
-                                                 JBoucher          
-                                                 LCAConstruction   
-                                                 LescuisinesJL     
-                                                 MaximeLandryDrolet
-                                                 Menuiserie-els    
-                                                 MLamontagne       
-                                                 RBouchard         
-                                                 relookingspray    
-                                                 TSanderson        
-                                                 Visiondici        
- 2   codeclient2          —     fct      194     Abeldesign        
-                                                 ABrealt           
-                                                 ACloutier         
-                                                 ALaplante         
-                                                 Avivia            
-                                                 Base              
-                                                 BCACuisine        
-                                                 belinterieur      
-                                                 ClientWeb         
-                                                 CRobitaille       
-                                                 DuninTest         
-                                                 GroupeNova        
-                                                 JBoucher          
-                                                 LCAConstruction   
-                                                 LescuisinesJL     
-                                                 MaximeLandryDrolet
-                                                 Menuiserie-els    
-                                                 MLamontagne       
-                                                 RBouchard         
-                                                 relookingspray    
-                                                 TSanderson        
-                                                 Visiondici        
- 3   typeclient           —     fct      0       particulier       
-                                                 particuliertrue   
-                                                 promoteurtrue     
-                                                 revendeurtrue     
- 4   ciclient             —     chr      565                       
- 5   datecreation         —     date     0                         
- 6   datevalidite         —     date     540                       
- 7   datedebvalidite      —     date     540                       
- 8   datereqexped         —     date     574                       
- 9   dateprevexped        —     date     705                       
- 10  datelivraisoninstall —     date     713                       
- 11  acompte1             —     dbl      280                       
- 12  acompte2             —     dbl      280                       
- 13  solde                —     dbl      311                       
- 14  total                —     dbl      187                       
- 15  totalht              —     dbl      185                       
- 16  soustotal            —     dbl      35                        
- 17  soustotalcab         —     dbl      56                        
- 18  soustotalcomptoir    —     dbl      288                       
- 19  soustotalservice     —     chr      502                       
- 20  totallivraison       —     dbl      489                       
- 21  totalinstall         —     dbl      628                       
- 22  qteitems             —     int      1                         
- 23  qteitemscab          —     int      1                         
- 24  gamme                —     fct      75      gamme_1           
-                                                 gamme_2           
-                                                 gamme_3           
- 25  gammedesc            —     fct      195     gamme_desc_1true  
-                                                 gamme_desc_2true  
- 26  statutcred           —     lgl      194                       
- 27  statutcjobsite       —     lgl      194                       
- 28  validcred            —     lgl      0                         
- 29  aveclivraison        —     lgl      76                        
- 30  cleenmain            —     lgl      126                       
- 31  prisemesure          —     lgl      127                       
- 32  installation         —     lgl      64                        
- 33  codepost             —     chr      369                       
- 34  emplacementcre       —     fct      0       Externe           
-                                                 Interne           
- 35  division             —     fct      11      Division_1        
- 36  commentaires         —     chr      688                       
- 37  courrielclient       —     chr      711                       
- 38  nomcharge            —     chr      693                       
- 39  telephoneclient      —     chr      713                       </code></pre>
+<pre><code># A tibble: 1 × 4
+  statistic    df p.value missing.patterns
+      &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;            &lt;int&gt;
+1      581.   100       0               20</code></pre>
 </div>
 </div>
+<p>conclusion : l’absence de données est liée aux caractéristiques ou variables de l’ensemble de données</p>
+</section>
+<section id="solution-dimputation-de-valeurs-k-nearest-neighbors-knn" class="level5" data-number="5.1.4.1.3">
+<h5 data-number="5.1.4.1.3" class="anchored" data-anchor-id="solution-dimputation-de-valeurs-k-nearest-neighbors-knn"><span class="header-section-number">5.1.4.1.3</span> solution d’imputation de valeurs k-nearest neighbors (knn) :</h5>
+<p>Pour chaque observation avec des valeurs manquantes, identifier les k observations les plus proches parmi celles qui ont des valeurs complètes pour les variables concernées. Utiliser les valeurs des voisins (la moyenne (ou la médiane)) pour imputer la valeur manquante :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(VIM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: colorspace</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: grid</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>VIM is ready to use.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Suggestions and bug-reports can be submitted at: https://github.com/statistikat/VIM/issues</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'VIM'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:datasets':
+
+    sleep</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">kNN</span>(varsQuantitativeCommandes,<span class="at">k=</span><span class="dv">7</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>varsQuantitativeCommandes <span class="ot">&lt;-</span>   result[, <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(varsQuantitativeCommandes)]</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># graphe 2</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>naniar<span class="sc">::</span><span class="fu">vis_miss</span>(varsQuantitativeCommandes) <span class="sc">+</span> <span class="fu">labs</span>(</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"représentation de la structure des colonnes où les données sont absentes."</span>, <span class="at">y =</span> <span class="st">"obserations"</span>, <span class="at">x =</span> <span class="st">"colonnes"</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="orders_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># resumé statistique des différentes colones </span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>varsQuantitativeCommandes <span class="sc">|&gt;</span> <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    acompte1           acompte2            solde              total        
+ Min.   :     0.6   Min.   :     0.8   Min.   :    1.42   Min.   :    0.0  
+ 1st Qu.:    50.0   1st Qu.:    55.0   1st Qu.:  953.86   1st Qu.:  415.8  
+ Median :   395.2   Median :   503.0   Median : 1836.16   Median : 1836.2  
+ Mean   :  3763.7   Mean   :  4594.5   Mean   : 4821.90   Mean   : 4933.5  
+ 3rd Qu.:  2719.5   3rd Qu.:  3003.9   3rd Qu.: 7001.22   3rd Qu.: 7692.1  
+ Max.   :625140.0   Max.   :623655.0   Max.   :35947.12   Max.   :35947.1  
+    totalht        soustotal        soustotalcab     soustotalcomptoir
+ Min.   :    0   Min.   :    0.0   Min.   :    0.0   Min.   :   0.0   
+ 1st Qu.:  180   1st Qu.:    0.0   1st Qu.:    0.0   1st Qu.:   0.0   
+ Median : 1353   Median :  807.8   Median :  650.7   Median : 272.9   
+ Mean   : 4056   Mean   : 3222.3   Mean   : 2847.6   Mean   : 790.8   
+ 3rd Qu.: 5814   3rd Qu.: 4763.9   3rd Qu.: 4330.3   3rd Qu.: 942.5   
+ Max.   :31265   Max.   :25546.2   Max.   :21425.9   Max.   :8367.7   
+    qteitems      qteitemscab    
+ Min.   : 0.00   Min.   : 0.000  
+ 1st Qu.: 0.00   1st Qu.: 0.000  
+ Median : 4.00   Median : 1.000  
+ Mean   :11.26   Mean   : 5.662  
+ 3rd Qu.:18.00   3rd Qu.: 9.000  
+ Max.   :72.00   Max.   :37.000  </code></pre>
+</div>
+</div>
+</section>
+</section>
 </section>
 </section>
 <section id="distribution-des-commandes-par-montant" class="level2" data-number="5.2">
@@ -909,7 +943,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/www\.dunin\.com\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
@@ -1238,8 +1272,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../03_eda/descriptive_statistics/index.html" class="pagination-link" aria-label="**Analyse descriptive**">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>Analyse descriptive</strong></span></span>
+      <a href="../../03_eda/descriptive_statistics/index.html" class="pagination-link" aria-label="**Analyses descriptives**">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title"><strong>Analyses descriptives</strong></span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
