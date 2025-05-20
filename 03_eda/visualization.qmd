@@ -1,9 +1,0 @@
----
-title: "Titre à remplir"
-author: "Auteur à remplir"
-date: "Date à remplir"
----
-
-# À compléter
-
-Contenu à rédiger ici.

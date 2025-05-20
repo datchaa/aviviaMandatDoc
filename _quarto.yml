@@ -3,35 +3,19 @@ project:
 
 book:
   favicon: public/images/logo_dunin.png
- 
-  site-url: https://www.dunin.com/
   title: "Mandat dunin "
   author: "simon-pierre Beugré"
   date: "2025-05-12"
   chapters:
     - index.qmd
-
     - part: "Contexte et projet"
       chapters:
         - 01_project_context/index.qmd
-
-
-    - part: " Analyse exploratoire (EDA) "
+    - part: "Analyse exploratoire des données (EDA)  "
       chapters:
-        - 03_eda/index.qmd
-        - 03_eda/data_preparation.qmd
-        - 03_eda/descriptive_statistics/index.qmd
-        - 03_eda/descriptive_statistics/orders.qmd
-       
-
-    - part: "Analyse avancée"
-      chapters:
-        - 04_advanced_analysis/index.qmd
-       
-
-    - part: "Application finale"
-      chapters:
-        - 05_application/index.qmd
+          - 03_eda/data_wrangling.qmd
+          - 03_eda/descriptive_statistics/orders.qmd 
+      
   sidebar: 
     border: true
     logo: public/images/logo_dunin.png     

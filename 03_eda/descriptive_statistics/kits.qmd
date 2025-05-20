@@ -1,9 +1,4 @@
 ---
-title: "Titre à remplir"
-author: "Auteur à remplir"
-date: "Date à remplir"
+title: "kits"
+format: html
 ---
-
-# À compléter
-Contenu à rédiger ici.
-

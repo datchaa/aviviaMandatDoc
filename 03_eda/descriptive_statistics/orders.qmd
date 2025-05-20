@@ -1,4 +1,4 @@
-# Analyse des documents ( commandes )
+# documents ( commandes )
 
 Ce chapitre présente une analyse descriptive des commandes.
 
@@ -7,170 +7,103 @@ Ce chapitre présente une analyse descriptive des commandes.
 ### Résumé de la table
 
 ```{r}
+library(naniar)
 library(dplyr)
-library(tidyr)
+library(ggplot2)
 library(purrr)
-load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
 
-TableCommande <- commandes$Comm
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/cleaned/documents.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/cleaned/kits.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/cleaned/projets.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/cleaned/addresses.RData")
 
-TableCommande <- TableCommande |> select_if(~!all(is.na(.))) |> # supprimer les colonnes totalement vides
-              rename_with(~ gsub("[^A-Za-z0-9]", "", .))  |> #supprime les caractères spéciaux dans le noms des colonnes
-             rename_with(~tolower(.)) #convertir  les colonnes en format minuscules
-  
-                 
 
-TableCommande |> glimpse () # afficher le résumé de la table 
- 
 ```
 
-### selections des variables ( colonnes pertinentes)
-
 ```{r}
+commandes <- documents |> filter(sorte == 'Comm') #  sélectionner les documents de type commandes
+kitsCommandes <- kits |> filter(!is.na(commande)) |> mutate(contrat = NULL) # selectionner les kits commandés
+commandesTable <- left_join(commandes,kitsCommandes,by = c("code" = "commande"), suffix = c("comm" ,"kit")) |> mutate(commande = NULL,sorte  = NULL) # jointure entre commandes et kitscommandes pour avoir une table unique et plus exhaustive
 
-variables_utiles <- c(
-  "nomclient", "codeclient2", "typeclient", "ciclient",
-  "datecreation", "datevalidite", "datedebvalidite", "datereqexped", "dateprevexped", "datelivraisoninstall",
-  "acompte1", "acompte2", "solde", "total", "totalht",
-  "soustotal", "soustotalcab", "soustotalcomptoir", "soustotalservice", "totallivraison",   "totalinstall",
-  "qteitems", "qteitemscab", "gamme", "gammedesc",
-  "statutcred", "statutcjobsite", "validcred",
-  "aveclivraison", "cleenmain", "prisemesure", "installation",
-  "codepost", "emplacementcre", "division",
-  "commentaires", "courrielclient", "nomcharge", "telephoneclient"
-)
+projets <- left_join(projets,addresses,by = c("code" = "projet"),suffix = c("projet","addr")) |> mutate(projet =NULL) # jointure avec la table projets , adresses
 
 
-TableCommande <- TableCommande[,variables_utiles]
-
-TableCommande |> glimpse()
-```
-
-### Conversion des colones dans des types de variables appropriés
-
-```{r}
-library(dplyr)
-library(stringr)
-library(lubridate)
-
-TableCommande_cleaned <- TableCommande |>
-  mutate(
-    # Conversion des dates
-    datecreation = ymd(datecreation),
-    datevalidite = ymd(datevalidite),
-    datedebvalidite = ymd(str_remove(datedebvalidite, "true")),
-    datereqexped = ymd(datereqexped),
-    dateprevexped = ymd(dateprevexped),
-    datelivraisoninstall = ymd(datelivraisoninstall),
-    
-    # Garder les acomptes en double mais nettoyer leur format
-    acompte1 = str_replace(acompte1, "%", ""), # Enlever le % s'il existe
-    acompte1 = as.numeric(str_extract(acompte1, "[0-9.]+")), # Extraire la valeur numérique
-    acompte2 = str_replace(acompte2, "%", ""), # Enlever le % s'il existe
-    acompte2 = as.numeric(str_extract(acompte2, "[0-9.]+")), # Extraire la valeur numérique
-    
-    # Nettoyer la colonne prisemesure et convertir en booléen
-    prisemesure = case_when(
-      str_detect(prisemesure, "false") ~ FALSE,
-      str_detect(prisemesure, "true") ~ TRUE,
-      str_detect(prisemesure, "null") ~ NA,
-      TRUE ~ NA
-    ),
-    
-    # Conversion des autres colonnes numériques
-    across(c(solde, total, totalht, soustotal, soustotalcab, 
-             soustotalcomptoir, totallivraison, totalinstall),
-           ~ as.numeric(str_replace_all(., "[^0-9.-]", ""))),
-    
-    # Conversion des booléens
-    across(c(statutcred, statutcjobsite, validcred, aveclivraison, cleenmain, installation),
-           ~ case_when(
-             . %in% c("true", "1") ~ TRUE,
-             . %in% c("false", "", "0") ~ FALSE,
-             TRUE ~ NA
-           )),
-    
-    # Conversion des autres types
-    across(c(qteitems, qteitemscab), as.integer),
-    across(c(nomclient, codeclient2, typeclient, gamme, gammedesc, emplacementcre, division), as.factor)
-  )
-
-#
-
-TableCommande_cleaned |> glimpse()
-
-  
+## on obtient donc une table unique contenant de façons exhaustive toute les informations sur les commande
 ```
 
 ### Gestion des valeurs manquantes ( NA )
 
+#### commandes
+
 ```{r}
-library(naniar)
-library(ggplot2)
+commandesTable |> glimpse()
+
 ```
 
 #### variables quantitatives
 
-##### graphe
+```{r }
 
-```{r}
-varsQuantitativeCommandes <- TableCommande_cleaned |> select(where(is.numeric))
-
-# visualer le taux des valeurs manquantes par variable
-
-# graphe 1
-gg_miss_var(varsQuantitativeCommandes,show_pct = TRUE) + labs(title = " Graphe de visualisation de valeurs manquantes : variables quatitatives ", x = "variables" , y = "Pourcentage de valeurs manquantes (%)" ) + theme_minimal()
-
-# graphe 2
-naniar::vis_miss(varsQuantitativeCommandes) + labs(
-  title = "représentation de la structure des colonnes où les données sont absentes.", y = "obserations", x = "colonnes"
-)
+varQuantitativesComm <- commandesTable |> select(where(is.numeric)) 
+varQuantitativesComm|>vis_miss() +
+  labs(title = "Graphe de visualisation du nombres de valeurs manquantes par variable")
 
 
-# suppression des variable avec plus 50% de valeurs manquantes totalinstall , total livraison
-varsQuantitativeCommandes <- varsQuantitativeCommandes |> 
-  mutate(totallivraison =NULL,totalinstall =NULL) |> 
-  arrange(qteitems) # ordonner de la plus petite à la plus grande quantite items pour la suite
 
 ```
 
-##### Vérification MCAR (Missing Completely at Random) :
+##### solution
 
-[**Rappel**]{.underline} :
-
--   MCAR (Missing Completely at Random) signifie que l'absence de données est complètement aléatoire et n'est liée à aucune autre caractéristique ou variable de l'ensemble de données. [voir plus ...](https://www.tandfonline.com/doi/abs/10.1080/01621459.1988.10478722)
-
--   **Test de Litte** :
-
-    1.  Une p-valeur élevée (\> 0.05) indique que les données sont probablement MCAR.
-
-    2.  Une p-valeur faible (\< 0.05) suggère que les données sont MAR (Missing At Random) ou MNAR (Missing Not At Random)
+###### garder les variables ayants leurs valeurs présentent \> 50 %
 
 ```{r}
+varQuantitativesComm <- varQuantitativesComm |>  
+   select(where(~ sum(!is.na(.x)) > nrow(varQuantitativesComm) * 0.5))   
+varQuantitativesComm |> vis_miss()
 
-LittLeTestResultat <- mcar_test(varsQuantitativeCommandes)
-LittLeTestResultat |> print()
-
+varQuantitativesComm |> questionr::look_for()
 ```
 
-conclusion : l'absence de données est liée aux caractéristiques ou variables de l'ensemble de données
-
-##### solution d'imputation de valeurs k-nearest neighbors (knn) :
+###### solution d'imputation des données : k-nearest neighbors (knn) :
 
 Pour chaque observation avec des valeurs manquantes, identifier les k observations les plus proches parmi celles qui ont des valeurs complètes pour les variables concernées. Utiliser les valeurs des voisins (la moyenne (ou la médiane)) pour imputer la valeur manquante :
 
 ```{r}
 library(VIM)
-result <- kNN(varsQuantitativeCommandes,k=7)
-varsQuantitativeCommandes <-   result[, 1:ncol(varsQuantitativeCommandes)]
+result <- kNN(varQuantitativesComm,k=7)
+varQuantitativesComm <-   result[, 1:ncol(varQuantitativesComm)]
 
 # graphe 2
-naniar::vis_miss(varsQuantitativeCommandes) + labs(
+naniar::vis_miss(varQuantitativesComm) + labs(
   title = "représentation de la structure des colonnes où les données sont absentes.", y = "obserations", x = "colonnes"
 )
+varQuantitativesComm |> glimpse() # resumé de la table imputé
+```
 
-# resumé statistique des différentes colones 
-varsQuantitativeCommandes |> summary()
+#### variables quanlitatives
+
+```{r}
+varQualitativesComm <- commandesTable |> select(where(is.factor)) 
+varQualitativesComm|>vis_miss() +
+  labs(title = "Graphe de visualisation du nombres de valeurs manquantes par variable")
+
+varQualitativesComm |> questionr::look_for()
+
+```
+
+###### solution d'imputation des données : création d'une catégorie "Non renseigne" pour ensuite essayer de comprendre etudier les raisons
+
+```{r}
+
+library(forcats)
+
+varQualitativesComm <- varQualitativesComm |>
+  mutate(across(
+    where(is.factor),
+    ~ forcats::fct_explicit_na(., na_level = "non renseigné")
+  ))
+
+varQualitativesComm |> questionr::look_for()
 
 ```
 
