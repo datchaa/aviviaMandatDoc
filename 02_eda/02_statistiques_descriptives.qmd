@@ -43,6 +43,8 @@ ventes <- bind_rows(commandes,contrats)
 
 ## identifier les profils types, répartitions et comportements clients
 
+### catégories clients
+
 ```{r}
 
 # Créer le tableau de fréquences et le convertir en data.frame

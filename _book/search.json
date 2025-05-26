@@ -628,7 +628,7 @@
     "href": "02_eda/02_statistiques_descriptives.html#identifier-les-profils-types-répartitions-et-comportements-clients",
     "title": "9  Analyses descriptives",
     "section": "10.1 identifier les profils types, répartitions et comportements clients",
-    "text": "10.1 identifier les profils types, répartitions et comportements clients\n\n\n\n\n\n\n\n10.1.1 classement des clients par nombres de transactions effectués",
+    "text": "10.1 identifier les profils types, répartitions et comportements clients\n\n10.1.1 catégories clients\n\n\n\n\n\n\n\n\n10.1.2 classement des clients par nombres de transactions effectués",
     "crumbs": [
       "3. Analyses ",
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>Analyses descriptives</span>"
