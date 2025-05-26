@@ -1,0 +1,8 @@
+---
+title: "Schéma d’architecture de la chaîne de traitement de données"
+format: html
+---
+
+# 
+Schéma d’architecture de la chaîne de traitement de données
+

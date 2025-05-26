@@ -1,0 +1,57 @@
+# Analyse descriptive documents ( commandes & contrats)
+
+Ce chapitre présente une analyse descriptive des commandes.
+
+## Résumé de la table
+
+```{r}
+
+library(tidyverse)
+library(echarts4r)
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/documents.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/kits.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/projets.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/etapes.RData")
+
+
+
+```
+
+# Analyse des ventes : Graphique synthèse du volume des ventes
+
+```{r}
+documents <- documents |> mutate(sorte = ifelse(sorte == "Comm", "commandes","contrats"))
+documents |> 
+  count(sorte, name = "quantité") |> 
+  e_charts(sorte) |> 
+  e_pie(quantité, label = list(formatter = "{b}: {d}%", fontSize = 15)) |>
+  e_title(
+    text = "Répartition des ventes",
+    subtext = paste("Total :", nrow(documents))
+  ) |>
+  e_tooltip(trigger = "item")
+
+
+
+
+```
+
+## Commandes
+
+```{r}
+
+
+
+```
+
+```{r}
+
+```
+
+### variables quantitatives
+
+```{r }
+
+
+```

@@ -1,0 +1,273 @@
+---
+title: " description et nettoyage kits"
+format: html
+---
+
+# Prévisualation de la table kits
+
+```{r}
+library(tidyverse)
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
+
+# Extraction de la table Kit
+kits <- bind_rows(commandes$Kit,contrats$Kit)
+
+kits |> glimpse()
+
+```
+
+# Nettoyage et transformation
+
+```{r}
+# cleaned fuctions
+dropColunmSpecialChr <- function(tbl){
+   tbl <- tbl |> rename_with(~ gsub("[^A-Za-z0-9]", "", .)) 
+}
+castColunmToLower <- function(tbl){
+  tbl <- tbl |> rename_with(~tolower(.))
+}
+cleanEmpytColumn <- function(tbl){
+  df_clean <- tbl |> select_if(~!all(is.na(.)))
+  df_clean
+}
+cleanDuplicateRows <- function(tbl){
+  df_clean <- tbl |> distinct()
+}
+cleanSpecialChar <- function(x){
+   if (is.character(x) || is.factor(x)) {
+    x <- as.character(x)|>
+      # Supprimer tous les caractères spéciaux sauf lettres, chiffres, espaces et certains caractères utiles
+      str_replace_all("[^[:alnum:] ,._-", "")|>
+      
+      # Remplacer les espaces multiples par un seul espace
+      str_squish()|>
+      # Convertir les chaînes vides en NA
+      na_if("")
+   }
+  
+  return(x)
+}
+
+
+kits <- kits |> 
+  dropColunmSpecialChr() |>
+  castColunmToLower() |>
+  cleanEmpytColumn() |>
+  cleanDuplicateRows() |>
+  cleanSpecialChar()
+
+
+
+
+# Nettoyage global des caractères non alphanumériques (hors espaces)
+kits <- kits |> mutate(across(everything(), ~ gsub("[^[:alnum:] ]", "", .)))
+
+
+kits <- kits |> select(-items)
+
+# Application du nettoyage et des transformations
+kits <- kits |> mutate(
+
+  # Facteurs (chaînes catégorielles, suppression de true/false)
+  across(
+    c("contrats","commandes", "portemodeleb", "portemodelebsensgrain", "portemodelefacadebsensgrain",
+      "portemodelefacadehsensgrain","portemodelefacadebepais","portemodelehepais", "portemodeleh", "portemodelehsensgrain",
+      "beammodele", "moullummodele", "moulpiedmodele", "typecolor",
+      "portemodelefacadeb", "unit", "staterr", "bdedgeporte", "bdfinishcolor",
+      "bdhandle", "bdhandleori", "bdserie", "bdspecie", "cabalignbase",
+      "cabconstruct", "cabdegagementwall", "tcabdegagementwall", "cabdesign",
+      "cabhautcomptoir", "cabhinge", "cabtypecomptoir", "cabwallprof",
+      "comptoircouleur", "comptoirmod", "dfedgeporte", "dffinishcolor",
+      "dfhandle", "dfhandleori", "dfserie", "dfspecie", "drawerconst",
+      "drawerslide", "edgebanding", "edgeporte", "edgetablette", "equerre",
+      "finishcolor", "handle", "handleori", "serie", "signature", "specie",
+      "tablettetype", "typekit", "wdedgebanding", "bdedgebanding", "dfedgebanding",
+      "cabtoekickprof", "tcabtoekickprof", "cabtoekicktype", "comptoirgpcouleur",
+      "detailsection", "kitutilisation", "portemodelefacadesensgrain", "nom", "matpatte"),
+    ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      factor(x)
+    }
+  ),
+
+  # Booléens
+  across(
+    c("enerreur", "estextra", "estprixadmin", "abomcustom", 
+      "couleurestbois", "patteachetee", "estbloqprix", "cacheneon"),
+    ~ case_when(
+      . %in% c("1", "vrai", "VRAI", "TRUE", "true", "Oui", "oui") ~ TRUE,
+      . %in% c("0", "faux", "FAUX", "FALSE", "false", "Non", "non") ~ FALSE,
+      is.na(.) ~ NA,
+      TRUE ~ as.logical(.)  # fallback
+    )
+  ),
+
+  # Variables numériques
+  across(
+    c("moullumheight", "moulpiedheight", "qte", "qtetr", "gtot","nokititem" ,
+      "costmatcumul", "costmocumul", "pricematcumul", "pricemocumul",
+      "beamheight", "cabtallheightalign", "portemodelebepais", 
+      "longcomptoir", "surfacecomptoir", "nbcomptoir","soustotalkit", "soustotalcab", "soustotaleff", "soustotalmoulure","soustotalkiteff",
+  "soustotalpanel"),
+    ~ {
+      x <- gsub("[A-Za-z]", "", .)     # Supprime toutes les lettres (ex : "9true" -> "9")
+      x <- ifelse(x == "", NA, x)      # Remplace chaînes vides par NA
+      as.numeric(x)
+    }
+  )
+)
+
+
+variables_tendances <- c(
+  
+  # type
+  "commandes","contrats",
+  # Caractéristiques produits
+  "portemodeleb", "portemodelebsensgrain", "portemodelefacadebsensgrain",
+  "portemodelefacadehsensgrain", "portemodeleh", "portemodelehsensgrain",
+  "beammodele", "moullummodele", "moulpiedmodele", "typecolor", "unit",
+  "bdserie", "bdspecie", "serie", "specie", "typekit", "kitutilisation",
+  
+  # Dimensions physiques
+  "moullumheight", "moulpiedheight", "beamheight", "cabtallheightalign",
+  "longcomptoir", "surfacecomptoir", "nbcomptoir",
+  "portemodelebepais", "portemodelefacadebepais", "portemodelehepais",
+  
+  # Quantités
+  "qte", "qtetr", "nokititem",
+  
+  # Finances
+  "costmatcumul", "costmocumul", "pricematcumul", "pricemocumul", "gtot", "costfgfcumul",
+  
+  # Flags
+  "enerreur", "estextra", "estprixadmin", "abomcustom", "couleurestbois",
+  "patteachetee", "estbloqprix", "cacheneon",
+  
+  # Totaux / cumuls
+  "soustotalkit", "soustotalcab", "soustotaleff", "soustotalmoulure",
+  "soustotalpanel", "totalcomptoir", "soustotalkiteff", "soustotalautre",
+  "totalcomptoireff", "extracomptoir"
+)
+
+kits <- kits |> select(all_of(variables_tendances))
+kits |> str()
+
+
+  
+```
+
+# Gestion des valeurs manquantes (NA)
+
+```{r}
+library(naniar) # 
+```
+
+## kits
+
+### variables quantitatives
+
+```{r}
+varQuantitativesKits <- kits |> select(where(is.numeric)) 
+
+varQuantitativesKits |> vis_miss()
+
+```
+
+##### solutions :
+
+-   Imputation des valeurs manquantes par KNN :
+
+Estimer la valeur manquante à partir des valeurs correspondantes chez ces voisins : - Pour une variable quantitative : en général la moyenne ou la médiane des valeurs des k voisins.
+
+```{r}
+library(VIM)
+
+# Imputation KNN (par défaut k = 5)
+varQuantitativesKits <- kNN(varQuantitativesKits,k=5,imp_var = FALSE)
+
+varQuantitativesKits <- varQuantitativesKits[,names(varQuantitativesKits)]
+
+varQuantitativesKits|> vis_miss()
+varQuantitativesKits |> questionr::look_for()
+
+```
+
+#### variables qualitatives
+
+```{r}
+varQualitativesKits <- kits |> select(where(is.factor))
+varQualitativesKits |> vis_miss()
+
+```
+
+##### solutions
+
+-   Création d'une nouvelle catégorie : Remplacer les valeurs manquantes par la valeur la plus fréquente (le mode).
+
+```{r}
+varQualitativesKits <- varQualitativesKits |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+
+varQualitativesKits |> vis_miss()
+
+```
+
+#### variables catégorielle binaires
+
+```{r}
+varsLogical <- kits |> select(where(is.logical))
+
+varsLogical |> vis_miss()
+
+```
+
+##### solution
+
+-   Remplacer p rar la valeur la plus fréquente de chaque variables (le mode)
+
+```{r}
+library(dplyr)
+
+varsLogical <- varsLogical |>
+  mutate(across(
+    everything(),
+    ~ {
+      mode_value <- names(sort(table(.), decreasing = TRUE))[1]
+      replace(., is.na(.), mode_value)
+    }
+  ))
+
+
+varsLogical |> vis_miss()
+
+
+
+```
+
+# Sauvegarde des données nettoyées et transformées
+
+```{r}
+
+# mise à jour des données kits
+
+kits <- kits |>
+  mutate(across(all_of(names(varQuantitativesKits)), ~ varQuantitativesKits[[cur_column()]])) |>
+  mutate(across(all_of(names(varQualitativesKits)), ~ varQualitativesKits[[cur_column()]])) |>
+  mutate(across(all_of(names(varsLogical)), ~ varsLogical[[cur_column()]])) 
+ 
+# Avec dplyr (recommandé)
+kits <- kits |>
+  select(where(~ mean(is.na(.x)) <= 0.4))
+
+save(kits,file = "../data/transformed/kits.RData")
+
+kits |> glimpse()
+kits |> vis_miss() 
+# mise à de table kits
+```

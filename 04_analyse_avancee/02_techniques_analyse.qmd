@@ -1,0 +1,8 @@
+---
+title: "Techniques d’analyse prédictive ou prescriptive (machine learning, clustering, etc.)"
+format: html
+---
+
+# 
+Techniques d’analyse prédictive ou prescriptive (machine learning, clustering, etc.)
+

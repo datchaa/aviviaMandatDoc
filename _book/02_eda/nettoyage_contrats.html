@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Description et nettoyage des données de contrats – Mandat dunin </title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../02_eda/nettoyage_kits.html" rel="next">
+<link href="../02_eda/nettoyage_commandes.html" rel="prev">
+<link href="../public/images/logo_dunin.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-6cb2b3e75f2444bb9f3fbc97ff54c0a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../02_eda/nettoyage_commandes.html">2. Collecte et Préparation des Données</a></li><li class="breadcrumb-item"><a href="../02_eda/nettoyage_contrats.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Description et nettoyage des données de contrats</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="../index.html" class="sidebar-logo-link">
+      <img src="../public/images/logo_dunin.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Mandat dunin</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Préface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">1. Contexte et Projet</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01_contexte_projet/01_contexte_metier.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Présentation du contexte métier</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01_contexte_projet/03_sources_donnees.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Description des sources de données disponibles</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">2. Collecte et Préparation des Données</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/nettoyage_commandes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">description et nettoyage commandes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/nettoyage_contrats.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Description et nettoyage des données de contrats</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/nettoyage_kits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">description et nettoyage kits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/nettoyage_projets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">description et nettoyage projets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/nettoyage_etapes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">description et nettoyage etapes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/dictionnaire_de_donnee_provisoire.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">dictionnaire des donnee provisoire</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">3. Analyses</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_eda/02_statistiques_descriptives.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analyses descriptives</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04_analyse_avancee/02_techniques_analyse.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Techniques d’analyse prédictive ou prescriptive (machine learning, clustering, etc.)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04_analyse_avancee/03_evaluation_modeles.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Évaluation et validation des modèles</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../04_analyse_avancee/04_interpretation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Interprétation métier des résultats</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">4. Modélisation et Mise en Œuvre du Processus ETL</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_etl/01_schema_architecture.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Schéma d’architecture de la chaîne de traitement de données</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_etl/02_extraction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Étapes d’extraction des données (sources internes/externes)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_etl/03_transformation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Transformations appliquées (nettoyage, normalisation, enrichissement)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_etl/04_chargement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Chargement dans un entrepôt ou un datamart</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_etl/05_outils.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Outils utilisés (ex : SQL, Python, Airflow, Talend…)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">5. Mise en Œuvre des Tableaux de Bord</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05_tableaux_bord/01_kpi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Identification des KPI clés</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05_tableaux_bord/02_conception_visualisations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Conception et ergonomie des visualisations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05_tableaux_bord/03_realisation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Réalisation des tableaux de bord (Power BI, Tableau, Shiny, etc.)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../05_tableaux_bord/04_scenarios_usage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Scénarios d’usage pour les utilisateurs finaux</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#prévisualisation-de-la-table-contrats" id="toc-prévisualisation-de-la-table-contrats" class="nav-link active" data-scroll-target="#prévisualisation-de-la-table-contrats"><span class="header-section-number">5</span> Prévisualisation de la table <code>contrats</code></a></li>
+  <li><a href="#nettoyage-et-transformation" id="toc-nettoyage-et-transformation" class="nav-link" data-scroll-target="#nettoyage-et-transformation"><span class="header-section-number">6</span> Nettoyage et transformation</a></li>
+  <li><a href="#gestion-des-valeurs-manquantes" id="toc-gestion-des-valeurs-manquantes" class="nav-link" data-scroll-target="#gestion-des-valeurs-manquantes"><span class="header-section-number">7</span> Gestion des valeurs manquantes</a>
+  <ul class="collapse">
+  <li><a href="#visualisation-des-valeurs-manquantes---variables-quantitatives" id="toc-visualisation-des-valeurs-manquantes---variables-quantitatives" class="nav-link" data-scroll-target="#visualisation-des-valeurs-manquantes---variables-quantitatives"><span class="header-section-number">7.1</span> Visualisation des valeurs manquantes - variables quantitatives</a></li>
+  <li><a href="#imputation-knn-valeurs-numériques" id="toc-imputation-knn-valeurs-numériques" class="nav-link" data-scroll-target="#imputation-knn-valeurs-numériques"><span class="header-section-number">7.2</span> Imputation KNN (valeurs numériques)</a></li>
+  <li><a href="#valeurs-manquantes---variables-qualitatives" id="toc-valeurs-manquantes---variables-qualitatives" class="nav-link" data-scroll-target="#valeurs-manquantes---variables-qualitatives"><span class="header-section-number">7.3</span> Valeurs manquantes - variables qualitatives</a>
+  <ul class="collapse">
+  <li><a href="#solution-ajout-dune-modalité-non_renseigne" id="toc-solution-ajout-dune-modalité-non_renseigne" class="nav-link" data-scroll-target="#solution-ajout-dune-modalité-non_renseigne"><span class="header-section-number">7.3.1</span> Solution : ajout d’une modalité “non_renseigne”</a></li>
+  </ul></li>
+  <li><a href="#valeurs-manquantes---variables-logiques" id="toc-valeurs-manquantes---variables-logiques" class="nav-link" data-scroll-target="#valeurs-manquantes---variables-logiques"><span class="header-section-number">7.4</span> Valeurs manquantes - variables logiques</a>
+  <ul class="collapse">
+  <li><a href="#solution-remplacement-par-la-modalité-la-plus-fréquente" id="toc-solution-remplacement-par-la-modalité-la-plus-fréquente" class="nav-link" data-scroll-target="#solution-remplacement-par-la-modalité-la-plus-fréquente"><span class="header-section-number">7.4.1</span> Solution : remplacement par la modalité la plus fréquente</a></li>
+  </ul></li>
+  <li><a href="#données-temporelles-manquantes" id="toc-données-temporelles-manquantes" class="nav-link" data-scroll-target="#données-temporelles-manquantes"><span class="header-section-number">7.5</span> Données temporelles manquantes</a>
+  <ul class="collapse">
+  <li><a href="#suppression-des-colonnes-avec-plus-de-40-de-valeurs-manquantes" id="toc-suppression-des-colonnes-avec-plus-de-40-de-valeurs-manquantes" class="nav-link" data-scroll-target="#suppression-des-colonnes-avec-plus-de-40-de-valeurs-manquantes"><span class="header-section-number">7.5.1</span> Suppression des colonnes avec plus de 40 % de valeurs manquantes</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sauvegarde-des-données-nettoyées" id="toc-sauvegarde-des-données-nettoyées" class="nav-link" data-scroll-target="#sauvegarde-des-données-nettoyées"><span class="header-section-number">8</span> Sauvegarde des données nettoyées</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../02_eda/nettoyage_commandes.html">2. Collecte et Préparation des Données</a></li><li class="breadcrumb-item"><a href="../02_eda/nettoyage_contrats.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Description et nettoyage des données de contrats</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title">Description et nettoyage des données de contrats</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="prévisualisation-de-la-table-contrats" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Prévisualisation de la table <code>contrats</code></h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,104
+Columns: 169
+$ `$codeClient2`                  &lt;chr&gt; "ALaplante", "ABrealt", "ACloutier", "…
+$ `$dateReqExped`                 &lt;chr&gt; "2025-03-10true", "2025-04-14true", NA…
+$ `$dateValidite`                 &lt;chr&gt; "2025/03/10", "2025/04/12", NA, "2025/…
+$ `$delaiPrevExped`               &lt;chr&gt; "2", "2", "2", "2", "2", "2", "2", "2"…
+$ `$disclaimers`                  &lt;chr&gt; "PriseMesure_100Electro_90", "PriseMes…
+$ `$emplacementCre`               &lt;chr&gt; "Interne", "Interne", "Interne", "Inte…
+$ `$etapes`                       &lt;chr&gt; "alaplante2025/01/09ManufacturierSaisi…
+$ `$identCour`                    &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$nbJourValide`                 &lt;chr&gt; "60", "90true", "60", "60", "90true", …
+$ `$nomClient`                    &lt;chr&gt; "ALaplante", "ABrealt", "ACloutier", "…
+$ `$projet`                       &lt;chr&gt; "P-001666", "P-001471", "P-000907", "P…
+$ `$promotions`                   &lt;chr&gt; "", NA, NA, "", "", "", NA, NA, NA, ""…
+$ `$qteItems`                     &lt;chr&gt; "51", "54", "41", "35", "52", "35", "2…
+$ `$qteItemsCab`                  &lt;chr&gt; "30", "24", "19", "18", "26", "18", "1…
+$ `$roleProprietaire`             &lt;chr&gt; "Employe", "Employe", "Employe", "Empl…
+$ `$sommairesKits`                &lt;chr&gt; "k011Custom008885.54k022Custom004085.6…
+$ `$sorte`                        &lt;chr&gt; "Contrat", "Contrat", "Contrat", "Cont…
+$ `$type`                         &lt;chr&gt; "Regulier", "Regulier", "Regulier", "R…
+$ `$typeClient`                   &lt;chr&gt; "particulier", "particulier", "particu…
+$ `$typeProcess`                  &lt;chr&gt; "interne", "interne", "interne", "inte…
+$ `$validCred`                    &lt;chr&gt; "true", "true", "true", "true", "true"…
+$ ligne                           &lt;chr&gt; "Custom", "Custom", "Custom", "Custom"…
+$ `$cleEnMain`                    &lt;chr&gt; "true", "true", "true", "true", "true"…
+$ `$dateDebValidite`              &lt;chr&gt; "2025-01-10true", "2025-01-13true", NA…
+$ `$installateur`                 &lt;chr&gt; "particuliers", "particuliers", "parti…
+$ `$installation`                 &lt;chr&gt; "true", "true", "true", "true", "true"…
+$ `$lumieres`                     &lt;chr&gt; "PUCK120mm_NI2PUCK79mm_NI5", "PUCK79mm…
+$ `$priseMesure`                  &lt;chr&gt; "true", "true", "true", "true", "true"…
+$ assemblage                      &lt;chr&gt; "Assemble", "assemble", "assemble", "a…
+$ edgeColle                       &lt;chr&gt; "pur", "pur", "pur", "pur", "pur", "pu…
+$ gamme                           &lt;chr&gt; "gamme_2", "gamme_2", "gamme_2", "gamm…
+$ `$cleItem`                      &lt;chr&gt; "979", "1671", "1232", "497", "1000", …
+$ `$createurCourriel`             &lt;chr&gt; "alaplante@avivia.ca", "abreault@avivi…
+$ `$createurNom`                  &lt;chr&gt; "Audrey Laplante", "Azély Breault", "A…
+$ `$dateCreation`                 &lt;chr&gt; "2025/01/09", "2025/01/13", "2025/02/2…
+$ `$division`                     &lt;chr&gt; "Division_1", "Division_1", "Division_…
+$ `$documCree`                    &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1"…
+$ `$ref1`                         &lt;chr&gt; "Cuisine V1true", "Plan cuisine (versi…
+$ `$sauvegarde`                   &lt;chr&gt; "true", "true", "true", "true", "true"…
+$ gammedesc                       &lt;chr&gt; "gamme_desc_2true", "gamme_desc_2true"…
+$ `$code`                         &lt;chr&gt; "P-001666-S1", "P-001471-S8", "P-00090…
+$ `$codeTaxe`                     &lt;chr&gt; "TPS", "TPS", "TPS", "TPS", "TPS", "TP…
+$ `$codeTaxe2`                    &lt;chr&gt; "TVQ", "TVQ", "TVQ", "TVQ", "TVQ", "TV…
+$ `$pourcEsc`                     &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$pourcEscSup`                  &lt;chr&gt; "0", "0", NA, "0", "0", "0", "0", "0",…
+$ `$sousTotal`                    &lt;chr&gt; "12971.2", "10167.35", "14746.37", "88…
+$ `$sousTotal2`                   &lt;chr&gt; "19868.85", "10246.6", "14947.76", "89…
+$ `$tauxTaxe`                     &lt;chr&gt; "5", "5", "5", "5", "5", "5", "5", "5"…
+$ `$tauxTaxe2`                    &lt;chr&gt; "9.975", "9.975", "9.975", "9.975", "9…
+$ `$total`                        &lt;chr&gt; "22844.21", "15750.67", "20895.79", "1…
+$ `$totalHT`                      &lt;chr&gt; "19868.85", "13699.21", "18174.2", "11…
+$ `$totalTx1`                     &lt;chr&gt; "993.44", "684.96", "908.71", "572.23"…
+$ `$totalTx2`                     &lt;chr&gt; "1981.92", "1366.5", "1812.88", "1141.…
+$ `$avecLivraison`                &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1"…
+$ `$cumulInstall`                 &lt;chr&gt; "2461.97", "2649.12", "2369.97", "1629…
+$ `$cumulVolume`                  &lt;chr&gt; "290.84", "202.28", "239.88", "138.18"…
+$ `$ecartPrix`                    &lt;chr&gt; "", "", "", "", "", "", "", "true", ""…
+$ `$fraisPDM`                     &lt;chr&gt; "PSD", "120", "120", "120", "120", "PS…
+$ `$fraisPSD`                     &lt;chr&gt; "PSD_PDM_INS_LIV", NA, NA, NA, NA, "PS…
+$ `$montantEcartPrix`             &lt;chr&gt; "", "", "", "", "", "", "", "0.4648757…
+$ `$pourcEscAutre`                &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$pourcEscCab`                  &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$pourcEscComptoir`             &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$pourcEscMoulure`              &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$pourcEscPanel`                &lt;chr&gt; "0", "0", "0", "0", "0", "0", "0", "0"…
+$ `$sousTotal2_ClientFinal`       &lt;chr&gt; "19868.85", "10246.6", "14947.76", "89…
+$ `$sousTotalAutre`               &lt;chr&gt; "79.25", "79.25", "201.39", "79.25", "…
+$ `$sousTotalAutre_Dealer`        &lt;chr&gt; "79.25", "79.25", "201.39", "79.25", "…
+$ `$sousTotalCab`                 &lt;chr&gt; "12165.4", "9240.67", "13370.61", "791…
+$ `$sousTotalComptoir`            &lt;chr&gt; "6818.4", NA, NA, NA, NA, NA, "2490.6"…
+$ `$sousTotalComptoir_Dealer`     &lt;chr&gt; "6818.4", NA, NA, NA, NA, NA, "2490.6"…
+$ `$sousTotalMoulure`             &lt;chr&gt; "161.45", "172.49", "216.43", "182.2",…
+$ `$sousTotalPanel`               &lt;chr&gt; "644.35", "754.19", "1159.33", "723.94…
+$ `$sousTotalService`             &lt;chr&gt; "PSD", "3452.61", "3226.44", "2539.44"…
+$ `$sousTotalServiceEsc`          &lt;chr&gt; "PSD", "3452.61", "3226.44", "2539.44"…
+$ `$sousTotal_Dealer`             &lt;chr&gt; "12971.2", "10167.35", "14746.37", "88…
+$ `$totalComptoirQuartz`          &lt;chr&gt; "6818.4", NA, NA, NA, "true", NA, "249…
+$ `$totalEscService`              &lt;chr&gt; "", NA, NA, NA, NA, "", NA, NA, "", NA…
+$ `$totalHT_CF`                   &lt;chr&gt; "19868.85", "13699.21", "18174.2", "11…
+$ `$totalInstall`                 &lt;chr&gt; "PSDnullvalide_CodePostal", "2949.12",…
+$ `$totalLivraison`               &lt;chr&gt; "PSD", "383.49", "436.47", "489.66", "…
+$ `$totalTx1_CF`                  &lt;chr&gt; "993.44", "684.96", "908.71", "572.23"…
+$ `$totalTx2_CF`                  &lt;chr&gt; "1981.92", "1366.5", "1812.88", "1141.…
+$ `$total_CF`                     &lt;chr&gt; "22844.21", "15750.67", "20895.79", "1…
+$ `$sousTotal2Eff`                &lt;chr&gt; "19868.85", "14143.49", "15047.76", "1…
+$ `$sousTotalAutreEff`            &lt;chr&gt; "79.25", "79.25", "201.39", "79.25", "…
+$ `$sousTotalAutre_DealerEff`     &lt;chr&gt; "79.25", "79.25", "201.39", "79.25", "…
+$ `$sousTotalCabEff`              &lt;chr&gt; "12165.4", "9240.67", "13370.61", "791…
+$ `$sousTotalComptoirEff`         &lt;chr&gt; "6818.4", "3896.89", "100", "2818.8", …
+$ `$sousTotalComptoir_DealerEff`  &lt;chr&gt; "6818.4", "3896.89", "100", "2818.8", …
+$ `$sousTotalEff`                 &lt;chr&gt; "12971.2", "10167.35", "14746.37", "88…
+$ `$sousTotalMoulureEff`          &lt;chr&gt; "161.45", "172.49", "216.43", "182.2",…
+$ `$sousTotalPanelEff`            &lt;chr&gt; "644.35", "754.19", "1159.33", "723.94…
+$ `$sousTotal_DealerEff`          &lt;chr&gt; "12971.2", "10167.35", "14746.37", "88…
+$ `$totalComptoirQuartzEff`       &lt;chr&gt; "6818.4", "3788.4", "100", NA, "6595.3…
+$ contrats                        &lt;chr&gt; "P-001666-S1", "P-001471-S8", "P-00090…
+$ `$avertLivraison`               &lt;chr&gt; NA, "Cout_Livraison_Peut_Modif", "Cout…
+$ `$codePost`                     &lt;chr&gt; NA, "G9H 3K1", "J0K 1V0", "G2C 2J1", "…
+$ `$codePostFinal`                &lt;chr&gt; NA, "G9H 3K1", "J0K 1V0", "G2C 2J1", "…
+$ `$totalComptoirStratifieEff`    &lt;chr&gt; NA, "108.49", NA, NA, NA, NA, NA, NA, …
+$ `$totalComptoirGraniteEff`      &lt;chr&gt; NA, NA, NA, "2818.8", NA, NA, NA, NA, …
+$ `$totalEscComptoirQuartzEff`    &lt;chr&gt; NA, NA, NA, NA, "", NA, NA, NA, NA, NA…
+$ `$dateTransfert`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, "2025/01/16", …
+$ `$signatureValidation`          &lt;chr&gt; NA, NA, NA, NA, NA, NA, "truetrue", NA…
+$ `$estBloqPrix`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, "true", "true"…
+$ `$totalComptoirStratifie`       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, "98.49…
+$ `$enErreur`                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$estReprise`                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$appNotifObligs`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$appNotifs`                    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$enPSD`                        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$statutCJobsite`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$statutCred`                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$ciClient`                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$memeCoordsJSCF`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$statutJobsite`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$fuelExtra`                    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$paletteNet`                   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$transpCumul`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$transpExtra`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$transpJobSite`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$transpNet`                    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$cumulService`                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalComptoirBois`            &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalComptoirGranite`         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoir`             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$unit`                         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$escSup`                       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalComptoirBoisEff`         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$memeCoordsJS`                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$commentaires`                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscAutre`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscCab`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscMoulure`              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscPanel`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscAutreEff`             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscCabEff`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirEff`          &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscMoulureEff`           &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscPanelEff`             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirStratifieEff` &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirBoisEff`      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirGraniteEff`   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$courrielCharge`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$nomCharge`                    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$telephoneCharge`              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition01`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition02`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition03`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition04`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition05`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$condition06`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEsc`                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$cumulCEM`                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$fraisSAV`                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$courrielClient`               &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$nomClientFin`                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$prenomClient`                 &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$telephoneClient`              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscEff`                  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$datePrevExped`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$pourcEscComptoirStratifie`    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirStratifie`    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$TotalEscompte`                &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirBois`         &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirGranite`      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$pourcEscComptoirQuartz`       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$pourcEscService`              &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+$ `$totalEscComptoirQuartz`       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…</code></pre>
+</div>
+</div>
+</section>
+<section id="nettoyage-et-transformation" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Nettoyage et transformation</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [3,104 × 43] (S3: tbl_df/tbl/data.frame)
+ $ nomclient       : Factor w/ 16 levels "ABrealt","ACloutier",..: 3 1 2 13 1 3 1 7 1 3 ...
+ $ projet          : Factor w/ 1159 levels "P-000003","P-000005",..: 958 824 437 968 969 991 909 879 909 958 ...
+ $ typeclient      : Factor w/ 3 levels "commercial","particulier",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ roleproprietaire: Factor w/ 2 levels "Client","Employe": 2 2 2 2 2 2 2 2 2 2 ...
+ $ validcred       : logi [1:3104] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ code            : Factor w/ 3104 levels "P-000390-S1",..: 599 225 8 639 641 696 469 380 470 600 ...
+ $ sorte           : chr [1:3104] "Contrat" "Contrat" "Contrat" "Contrat" ...
+ $ datevalidite    : Date[1:3104], format: "2025-03-10" "2025-04-12" ...
+ $ datedebvalidite : Date[1:3104], format: "2025-01-10" "2025-01-13" ...
+ $ datecreation    : Date[1:3104], format: "2025-01-09" "2025-01-13" ...
+ $ datereqexped    : Date[1:3104], format: "2025-03-10" "2025-04-14" ...
+ $ dateprevexped   : Date[1:3104], format: NA NA ...
+ $ emplacementcre  : Factor w/ 2 levels "Externe","Interne": 2 2 2 2 2 2 2 2 2 2 ...
+ $ nbjourvalide    : int [1:3104] 60 90 60 60 90 60 90 60 90 60 ...
+ $ qteitems        : int [1:3104] 51 54 41 35 52 35 29 31 5 16 ...
+ $ qteitemscab     : int [1:3104] 30 24 19 18 26 18 13 18 2 12 ...
+ $ ligne           : Factor w/ 3 levels "Custom","Eco",..: 1 1 1 1 1 1 1 1 1 1 ...
+ $ aveclivraison   : logi [1:3104] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ avertlivraison  : Factor w/ 1 level "Cout_Livraison_Peut_Modif": NA 1 1 1 1 NA 1 1 NA 1 ...
+ $ codepost        : Factor w/ 587 levels "123 a confirmer",..: NA 453 540 222 410 NA 98 20 NA 24 ...
+ $ codepostfinal   : Factor w/ 499 levels "123 a confirmer",..: NA 391 459 197 355 NA 90 20 NA 23 ...
+ $ installation    : logi [1:3104] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ prisemesure     : logi [1:3104] TRUE TRUE TRUE TRUE TRUE TRUE ...
+ $ assemblage      : logi [1:3104] TRUE FALSE FALSE FALSE FALSE FALSE ...
+ $ edgecolle       : Factor w/ 1 level "pur": 1 1 1 1 1 1 1 1 1 1 ...
+ $ gamme           : Factor w/ 4 levels "gamme_1","gamme_2",..: 2 2 2 2 2 2 2 2 2 2 ...
+ $ cleitem         : int [1:3104] 979 1671 1232 497 1000 781 322 531 41 526 ...
+ $ lumieres        : Factor w/ 100 levels "PUCK120mm_BL1",..: 5 83 83 74 96 58 NA NA NA NA ...
+ $ type            : Factor w/ 1 level "Regulier": 1 1 1 1 1 1 1 1 1 1 ...
+ $ typeprocess     : Factor w/ 2 levels "externe","interne": 2 2 2 2 2 2 2 2 2 2 ...
+ $ division        : Factor w/ 1 level "Division_1": 1 1 1 1 1 1 1 1 1 1 ...
+ $ codetaxe        : Factor w/ 2 levels "NA","TPS": 2 2 2 2 2 2 2 2 2 2 ...
+ $ codetaxe2       : Factor w/ 2 levels "NA","TVQ": 2 2 2 2 2 2 2 2 2 2 ...
+ $ totalescompte   : chr [1:3104] NA NA NA NA ...
+ $ pourcesc        : int [1:3104] 0 0 0 0 0 0 0 0 0 0 ...
+ $ soustotal       : int [1:3104] 12971 10167 14746 8825 13739 9300 5653 9964 461 4987 ...
+ $ tauxtaxe        : int [1:3104] 5 5 5 5 5 5 5 5 5 5 ...
+ $ tauxtaxe2       : int [1:3104] 9 9 9 9 9 9 9 9 9 9 ...
+ $ totaltx1        : int [1:3104] 993 684 908 572 861 469 427 641 34 339 ...
+ $ totaltx2        : int [1:3104] 1981 1366 1812 1141 1719 935 852 1278 67 677 ...
+ $ totalesc        : chr [1:3104] NA NA NA NA ...
+ $ totalht         : int [1:3104] 19868 13699 18174 11444 17233 9379 8541 12820 680 6796 ...
+ $ total           : int [1:3104] 22844 15750 20895 13158 19813 10784 9820 14740 781 7813 ...</code></pre>
+</div>
+</div>
+</section>
+<section id="gestion-des-valeurs-manquantes" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Gestion des valeurs manquantes</h1>
+<section id="visualisation-des-valeurs-manquantes---variables-quantitatives" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="visualisation-des-valeurs-manquantes---variables-quantitatives"><span class="header-section-number">7.1</span> Visualisation des valeurs manquantes - variables quantitatives</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="imputation-knn-valeurs-numériques" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="imputation-knn-valeurs-numériques"><span class="header-section-number">7.2</span> Imputation KNN (valeurs numériques)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code> pos variable     label col_type missing values
+ 1   nbjourvalide —     int      0             
+ 2   qteitems     —     int      0             
+ 3   qteitemscab  —     int      0             
+ 4   cleitem      —     int      0             
+ 5   pourcesc     —     int      0             
+ 6   soustotal    —     int      0             
+ 7   tauxtaxe     —     int      0             
+ 8   tauxtaxe2    —     int      0             
+ 9   totaltx1     —     int      0             
+ 10  totaltx2     —     int      0             
+ 11  totalht      —     int      0             
+ 12  total        —     int      0             </code></pre>
+</div>
+</div>
+</section>
+<section id="valeurs-manquantes---variables-qualitatives" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="valeurs-manquantes---variables-qualitatives"><span class="header-section-number">7.3</span> Valeurs manquantes - variables qualitatives</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="solution-ajout-dune-modalité-non_renseigne" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="solution-ajout-dune-modalité-non_renseigne"><span class="header-section-number">7.3.1</span> Solution : ajout d’une modalité “non_renseigne”</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="valeurs-manquantes---variables-logiques" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="valeurs-manquantes---variables-logiques"><span class="header-section-number">7.4</span> Valeurs manquantes - variables logiques</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="solution-remplacement-par-la-modalité-la-plus-fréquente" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="solution-remplacement-par-la-modalité-la-plus-fréquente"><span class="header-section-number">7.4.1</span> Solution : remplacement par la modalité la plus fréquente</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="données-temporelles-manquantes" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="données-temporelles-manquantes"><span class="header-section-number">7.5</span> Données temporelles manquantes</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="suppression-des-colonnes-avec-plus-de-40-de-valeurs-manquantes" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="suppression-des-colonnes-avec-plus-de-40-de-valeurs-manquantes"><span class="header-section-number">7.5.1</span> Suppression des colonnes avec plus de 40 % de valeurs manquantes</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sauvegarde-des-données-nettoyées" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Sauvegarde des données nettoyées</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 3,104
+Columns: 37
+$ nomclient        &lt;fct&gt; ALaplante, ABrealt, ACloutier, RBouchard, ABrealt, AL…
+$ projet           &lt;fct&gt; P-001666, P-001471, P-000907, P-001681, P-001682, P-0…
+$ typeclient       &lt;fct&gt; particulier, particulier, particulier, particulier, p…
+$ roleproprietaire &lt;fct&gt; Employe, Employe, Employe, Employe, Employe, Employe,…
+$ validcred        &lt;chr&gt; "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE…
+$ code             &lt;fct&gt; P-001666-S1, P-001471-S8, P-000907-S1, P-001681-S2, P…
+$ sorte            &lt;chr&gt; "Contrat", "Contrat", "Contrat", "Contrat", "Contrat"…
+$ datecreation     &lt;date&gt; 2025-01-09, 2025-01-13, 2025-02-25, 2025-02-25, 2025…
+$ emplacementcre   &lt;fct&gt; Interne, Interne, Interne, Interne, Interne, Interne,…
+$ nbjourvalide     &lt;int&gt; 60, 90, 60, 60, 90, 60, 90, 60, 90, 60, 90, 60, 60, 6…
+$ qteitems         &lt;int&gt; 51, 54, 41, 35, 52, 35, 29, 31, 5, 16, 7, 45, 41, 58,…
+$ qteitemscab      &lt;int&gt; 30, 24, 19, 18, 26, 18, 13, 18, 2, 12, 4, 23, 17, 33,…
+$ ligne            &lt;fct&gt; Custom, Custom, Custom, Custom, Custom, Custom, Custo…
+$ aveclivraison    &lt;chr&gt; "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE…
+$ avertlivraison   &lt;fct&gt; non_renseigne, Cout_Livraison_Peut_Modif, Cout_Livrai…
+$ codepost         &lt;fct&gt; non_renseigne, G9H 3K1, J0K 1V0, G2C 2J1, G8Y 5J8, no…
+$ codepostfinal    &lt;fct&gt; non_renseigne, G9H 3K1, J0K 1V0, G2C 2J1, G8Y 5J8, no…
+$ installation     &lt;chr&gt; "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE…
+$ prisemesure      &lt;chr&gt; "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE", "TRUE…
+$ assemblage       &lt;chr&gt; "TRUE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", …
+$ edgecolle        &lt;fct&gt; pur, pur, pur, pur, pur, pur, pur, pur, pur, pur, pur…
+$ gamme            &lt;fct&gt; gamme_2, gamme_2, gamme_2, gamme_2, gamme_2, gamme_2,…
+$ cleitem          &lt;int&gt; 979, 1671, 1232, 497, 1000, 781, 322, 531, 41, 526, 1…
+$ lumieres         &lt;fct&gt; PUCK120mm_NI2PUCK79mm_NI5, PUCK79mm_WH4, PUCK79mm_WH4…
+$ type             &lt;fct&gt; Regulier, Regulier, Regulier, Regulier, Regulier, Reg…
+$ typeprocess      &lt;fct&gt; interne, interne, interne, interne, interne, interne,…
+$ division         &lt;fct&gt; Division_1, Division_1, Division_1, Division_1, Divis…
+$ codetaxe         &lt;fct&gt; TPS, TPS, TPS, TPS, TPS, TPS, TPS, TPS, TPS, TPS, TPS…
+$ codetaxe2        &lt;fct&gt; TVQ, TVQ, TVQ, TVQ, TVQ, TVQ, TVQ, TVQ, TVQ, TVQ, TVQ…
+$ pourcesc         &lt;int&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ soustotal        &lt;int&gt; 12971, 10167, 14746, 8825, 13739, 9300, 5653, 9964, 4…
+$ tauxtaxe         &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…
+$ tauxtaxe2        &lt;int&gt; 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,…
+$ totaltx1         &lt;int&gt; 993, 684, 908, 572, 861, 469, 427, 641, 34, 339, 82, …
+$ totaltx2         &lt;int&gt; 1981, 1366, 1812, 1141, 1719, 935, 852, 1278, 67, 677…
+$ totalht          &lt;int&gt; 19868, 13699, 18174, 11444, 17233, 9379, 8541, 12820,…
+$ total            &lt;int&gt; 22844, 15750, 20895, 13158, 19813, 10784, 9820, 14740…</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="nettoyage_contrats_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../02_eda/nettoyage_commandes.html" class="pagination-link" aria-label="description et nettoyage commandes">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">description et nettoyage commandes</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../02_eda/nettoyage_kits.html" class="pagination-link" aria-label="description et nettoyage kits">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">description et nettoyage kits</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

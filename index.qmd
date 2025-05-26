@@ -10,7 +10,7 @@ Ce projet vise à mettre en place une solution d'analyse automatisée des donné
 
 Ce document est organisé en plusieurs parties:
 
-1.  **Contexte et projet**: Présentation du contexte, des objectifs et de la méthodologie.
+1.  **Contexte et projet**: Présentation du contexte, des objectifs .
 2.  **Collecte et Analyse exploratoire (EDA)** des donnés :Statistiques descriptives, visualisations et analyse des relations entre les variables.
 3.  **Analyse avancées**: Techniques d'analyse avancées appliquées aux données.
 4.  **Mise en oeuvre des tableaux de bords** : Présentation de l'application développée à partir des analyses.

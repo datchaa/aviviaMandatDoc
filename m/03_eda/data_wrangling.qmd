@@ -1,0 +1,653 @@
+# Colllecte et préparation des données
+
+## connexion et vue d'ensemble de la base de données
+
+```{r}
+#| include: false
+library(DBI)
+library(odbc)
+library(dplyr)
+library(purrr)
+library(lubridate)
+library(stringr)
+library(bit64)
+library(forcats)
+
+```
+
+```{r}
+
+
+
+conn <- dbConnect(odbc(), .connection_string = "Driver={ODBC Driver 18 for SQL Server};", 
+            Server = "server-sql-dunin-eve.database.windows.net", Database = "AviviaEve_Copy", 
+            UID = "accesAviviaData", PWD = "Citric&Private&Designed&Maturity1&Cloning")
+
+
+# selectionner les noms des tables 
+print(DBI::dbListTables(conn,schema="dbo"))
+
+
+
+
+```
+
+les informations de la base de données sont principalement contenues dans trois tables principales : ProjetEW, CommEW et ContratEW.
+
+```{r}
+#| include: false
+
+library(dplyr)
+
+#acces aux tables  sans chargement en memoire
+GetLazyDBAccess <- function(conn,tables){
+  lazyDb <- lapply(tables, function(tbl_name) {
+    tbl(conn, tbl_name) # Accesses each table from the connection
+  })
+  lazyDb
+}
+
+mainTables <- c("CommEW","ContratEW","ProjetEW")
+AviviaDBData <- GetLazyDBAccess(conn,mainTables)
+names(AviviaDBData) <- mainTables
+
+
+
+print(AviviaDBData |> names())
+```
+
+## Sources et méthodes de collecte des données
+
+```{r}
+#| echo: false
+ 
+# Création d'un tableau récapitulatif des sources de données
+sources_data <- data.frame(
+  Source = c("avivia database"),
+  Type = c("Base de données SQL" ),
+  Description = c("Base de donnée transactionnel des activités de ventes"),
+  Methode_de_collecte = c(" Via la plateforme Eve "),
+  Volumétrie = c("8 Go" ),
+  Fréquence = c("Temps réel")
+)
+
+knitr::kable(sources_data, caption = "Vue d'ensemble des sources de données")
+```
+
+### table commandes
+
+```{r}
+AviviaDBData$CommEW |> head()
+```
+
+### table contrat
+
+```{r}
+AviviaDBData$ContratEW |> head()
+```
+
+### table projet
+
+```{r}
+AviviaDBData$ProjetEW |> head()
+```
+
+### structure de fichier xml
+
+Après une analyse des champs des différentes tables, nous avons choisi de nous concentrer sur ceux contenant des fichiers XML notemment : ***`DocumXML`*****, *`EveXML`*** et *`ProjetXML`* . Ces derniers non seulement synthétisent les informations de chaque table, mais renferment également davantage de données pertinentes et intéressantes.
+
+Exemple de la structure des fichiers xmls ( ils ont ensemble fondemmentalement la meme structure )
+
+```{r}
+library(xml2) 
+
+AviviaDBData$CommEW |> head(1) |> pull(DocumXML) |> as_xml_document() |> xml_structure()
+```
+
+### extractions des information et tables potentielles des différents
+
+fichiers xmls
+
+### fichiers DocumXML et EveXML de la table CommEW (commandes)
+
+```{r}
+ load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+ #
+ commandes |> names()
+```
+
+### fichiers DocumXML et EveXML de la table ContratEW (contrats)
+
+```{r}
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
+ #
+ contrats |> names()
+```
+
+### fichiers ProjetXML de la table ProjetEw (projets)
+
+```{r}
+ load("C:/Users/datch/Desktop/aviviaMandatDoc/data/projets.RData")
+ #
+ projets |> names()
+```
+
+## diagrammmes de sélection des entités pour l'analyse
+
+```{mermaid}
+graph TD
+   
+
+   
+    Document -->|contient| Commandes
+    Document -->|contient| Contrat
+    Kit -->| lié à | Document
+    
+    Projet -->| lié à | Document 
+    
+    Projet -->|contient| AdrCivique
+ 
+   
+```
+
+# Nettoyage et transformation des données
+
+```{r}
+#| include: false
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/projets.RData")
+
+```
+
+```{r}
+# cleaned fuctions
+dropColunmSpecialChr <- function(tbl){
+   tbl <- tbl |> rename_with(~ gsub("[^A-Za-z0-9]", "", .)) 
+}
+castColunmToLower <- function(tbl){
+  tbl <- tbl |> rename_with(~tolower(.))
+}
+cleanEmpytColumn <- function(tbl){
+  df_clean <- tbl |> select_if(~!all(is.na(.)))
+  df_clean
+}
+cleanUnimportantCols <- function(tbl){
+  df_clean <- tbl |> select(!contains(c('js')))
+  df_clean
+}
+cleanDuplicateCols <- function(tbl){
+  tbl[, !duplicated(as.list(tbl))]
+}
+cleanDuplicateRows <- function(tbl){
+  df_clean <- tbl |> distinct()
+}
+cleanSpecialChar <- function(x){
+   if (is.character(x) || is.factor(x)) {
+    x <- as.character(x)|>
+      # Supprimer tous les caractères spéciaux sauf lettres, chiffres, espaces et certains caractères utiles
+      str_replace_all("[^[:alnum:] ,._-", "")|>
+      
+      # Remplacer les espaces multiples par un seul espace
+      str_squish()|>
+      # Convertir les chaînes vides en NA
+      na_if("")
+   }
+  
+  return(x)
+}
+cleanData <- function(tbls){
+  tbls <- tbls |> 
+    map(cleanDuplicateCols) |>
+    map(dropColunmSpecialChr)|>
+    map(castColunmToLower) |>
+    map(cleanEmpytColumn) |>
+    map(cleanUnimportantCols) 
+    
+}
+# 
+TableContratsNettoyees <- contrats[c("Contrat","Etape","Kit","Lumiere")] |> cleanData()
+TableCommandesNettoyees <- commandes[c("Comm","Etape","Kit","Lumiere")] |> cleanData()
+TableProjetsNettoyees <- projets[c("AdrCivique","Client","Marche","Projet")] |> cleanData()
+
+
+
+```
+
+## documents (commandes & contrats)
+
+```{r}
+#| echo: true
+
+
+documents <- bind_rows(TableCommandesNettoyees$Comm,TableContratsNettoyees$Contrat)
+# nettoyage
+documents <- documents |> mutate(pourcentageAcompte1 = str_extract(acompte1, "\\d{2}%$"),pourcentageAcompte2 = str_extract(acompte2,"\\d{2}%$"),acompte1 = str_replace(acompte1, "\\d{2}%$", ""),acompte2 =  str_replace(acompte2, "\\d{2}%$", "")) # creation de colonnes pourcentage pour chaque acompte
+
+documents <- documents |>
+  mutate(
+    estPsd = (total == "PSD") ,  # 1. Créer la colonne estPsd (TRUE/FALSE si total == "PSD") 
+    across(everything(), ~ ifelse(. == "PSD", 0, .)), # 2. Remplacer "PSD" par 0 dans TOUTES les colonnes
+    prisemesure = gsub("priseDeMesure", "", prisemesure), # nettoyage prisedemesure 
+    prisemesure = ifelse(prisemesure == "null",NA_character_,prisemesure),
+    aveclivraison = ifelse(aveclivraison == "1",TRUE,FALSE),
+    assemblage = ifelse(assemblage == "Assemble",TRUE,FALSE),
+    pourcentageAcompte1 = gsub("%","",pourcentageAcompte1),
+    pourcentageAcompte2 = gsub("%","",pourcentageAcompte2),
+    nbjourvalide = gsub("true","",pourcentageAcompte1)
+    # garder que deux valeurs possible TRUE ouFALSE
+    ) |> 
+   mutate(across(
+    .cols = starts_with(c("date","pourc","nbjour")),
+    .fns = ~ str_remove_all(., "[A-Za-z]")  # Supprime toutes les lettres variable dates
+  ))
+
+ 
+  
+ 
+# selectionner des variables pertinantes et convertions dans les types approprié pour analyse
+ 
+vars_utiles <- c(
+  
+  # Informations client / projet
+  "nomclient", "projet", "typeclient", "roleproprietaire", "validcred",
+  
+  
+ # autre
+ "code","sorte", 
+ 
+
+   # Dates importantes
+  "datevalidite", "datedebvalidite", "datecreation", "datereqexped", 
+  "dateprevexped", "datelivraisoninstall","dateacompte1emis", "dateacompte1recep", "dateacompte2emis", "dateacompte2recep",
+
+  
+  # Localisation et durée
+  "emplacementcre", "nbjourvalide",  
+
+  # Données logistiques et produits
+  "qteitems", "qteitemscab", "ligne", "aveclivraison", "avertlivraison",
+  "codepost", "codepostfinal", "installation", "prisemesure", "assemblage", 
+  "edgecolle", "gamme", "cleitem", "lumieres", "type", "typeprocess", "estPsd",
+
+
+
+  # Références administratives
+  "division", "codetaxe", "codetaxe2",
+   # Informations sur les acomptes
+  "acompte1", "acompte2", "pourcentageAcompte1", "pourcentageAcompte2",
+  "totalescompte",
+
+  # Données financières
+  "pourcesc", "soustotal", "tauxtaxe", "tauxtaxe2", 
+  "totaltx1", "totaltx2", "totalesc","totalht","total","solde"
+
+
+ 
+)
+
+documents <- documents |> select(all_of(vars_utiles)) |> relocate(vars_utiles)
+
+
+#
+documents <-  documents |>
+  
+  # 1. Conversion des dates (silencieuse)
+  mutate(across(
+    c(datevalidite, datedebvalidite, datecreation, datereqexped, 
+      dateprevexped, datelivraisoninstall,dateacompte1emis, dateacompte1recep, dateacompte2emis, dateacompte2recep),
+    ~ ymd(., quiet = TRUE)
+  )) |>
+  
+  # 2. Conversion numérique avec nettoyage
+  mutate(across(
+    c(acompte1, acompte2, pourcentageAcompte1, pourcentageAcompte2, totalescompte,
+      solde, pourcesc, soustotal, tauxtaxe, tauxtaxe2, total, totalht, 
+      totaltx1, totaltx2),
+    ~ as.integer(gsub("[^0-9.-]", "", .))
+  )) |> mutate(pourcentageAcompte1 = pourcentageAcompte1 / 100 ,
+               pourcentageAcompte2 = pourcentageAcompte2 / 100,
+               pourcesc = pourcesc / 100
+               ) |>
+  
+  # 3. Conversion en entiers
+  mutate(across(
+    c(qteitems, qteitemscab, nbjourvalide, cleitem),
+    ~ as.integer(.)
+  )) |>
+  
+  # 4. Conversion en logique (TRUE/FALSE/NA)
+  mutate(across(
+    c(aveclivraison, avertlivraison, estPsd, installation, 
+      prisemesure, assemblage, validcred),
+    ~ as.logical(case_when(
+      . %in% c("1", "TRUE", "VRAI", "O") ~ TRUE,
+      . %in% c("0", "FALSE", "FAUX", "N", "") ~ FALSE,
+      TRUE ~ NA
+    ))
+  )) |>
+  
+  # 5. Conversion en facteurs
+  mutate(across(
+    c(nomclient, projet, typeclient, roleproprietaire, 
+      codepost, codepostfinal, edgecolle, gamme, lumieres, type, typeprocess,
+      emplacementcre, division, codetaxe, codetaxe2, ligne, code),
+    as.factor
+  ))
+
+
+# 
+
+documents |> str()
+
+  
+```
+
+## kits (commandes & contrats)
+
+```{r}
+
+# Extraction de la table Kit
+kits <- bind_rows(TableContratsNettoyees$Kit,TableCommandesNettoyees$Kit)
+
+# Suppression des colonnes en double avec 'documents'
+cols_a_supprimer <- intersect(names(documents), names(kits))
+kits <- kits |> select(-all_of(cols_a_supprimer))
+
+# Nettoyage global des caractères non alphanumériques (hors espaces)
+kits <- kits |> mutate(across(everything(), ~ gsub("[^[:alnum:] ]", "", .)))
+
+
+kits <- kits |> select(-items)
+
+# Application du nettoyage et des transformations
+kits <- kits |> mutate(
+
+  # Facteurs (chaînes catégorielles, suppression de true/false)
+  across(
+    c("portemodeleb", "portemodelebsensgrain", "portemodelefacadebsensgrain",
+      "portemodelefacadehsensgrain", "portemodeleh", "portemodelehsensgrain",
+      "beammodele", "moullummodele", "moulpiedmodele", "typecolor",
+      "portemodelefacadeb", "unit", "staterr", "bdedgeporte", "bdfinishcolor",
+      "bdhandle", "bdhandleori", "bdserie", "bdspecie", "cabalignbase",
+      "cabconstruct", "cabdegagementwall", "tcabdegagementwall", "cabdesign",
+      "cabhautcomptoir", "cabhinge", "cabtypecomptoir", "cabwallprof",
+      "comptoircouleur", "comptoirmod", "dfedgeporte", "dffinishcolor",
+      "dfhandle", "dfhandleori", "dfserie", "dfspecie", "drawerconst",
+      "drawerslide", "edgebanding", "edgeporte", "edgetablette", "equerre",
+      "finishcolor", "handle", "handleori", "serie", "signature", "specie",
+      "tablettetype", "typekit", "wdedgebanding", "bdedgebanding", "dfedgebanding",
+      "cabtoekickprof", "tcabtoekickprof", "cabtoekicktype", "comptoirgpcouleur",
+      "detailsection", "kitutilisation", "portemodelefacadesensgrain", "nom", "matpatte"),
+    ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      factor(x)
+    }
+  ),
+
+  # Booléens
+  across(
+    c("enerreur", "estextra", "estprixadmin", "abomcustom", 
+      "couleurestbois", "patteachetee", "estbloqprix", "cacheneon"),
+    ~ case_when(
+      . %in% c("1", "vrai", "VRAI", "TRUE", "true", "Oui", "oui") ~ TRUE,
+      . %in% c("0", "faux", "FAUX", "FALSE", "false", "Non", "non") ~ FALSE,
+      is.na(.) ~ NA,
+      TRUE ~ as.logical(.)  # fallback
+    )
+  ),
+
+  # Variables numériques
+  across(
+    c("moullumheight", "moulpiedheight", "qte", "qtetr", "gtot", 
+      "costmatcumul", "costmocumul", "pricematcumul", "pricemocumul",
+      "beamheight", "cabtallheightalign", "portemodelebepais", 
+      "longcomptoir", "surfacecomptoir", "nbcomptoir"),
+    ~ {
+      x <- gsub("[A-Za-z]", "", .)     # Supprime toutes les lettres (ex : "9true" -> "9")
+      x <- ifelse(x == "", NA, x)      # Remplace chaînes vides par NA
+      as.numeric(x)
+    }
+  )
+)
+
+
+variables_tendances <- c(
+  
+  # type
+  "commandes","contrats",
+  # Caractéristiques produits
+  "portemodeleb", "portemodelebsensgrain", "portemodelefacadebsensgrain",
+  "portemodelefacadehsensgrain", "portemodeleh", "portemodelehsensgrain",
+  "beammodele", "moullummodele", "moulpiedmodele", "typecolor", "unit",
+  "bdserie", "bdspecie", "serie", "specie", "typekit", "kitutilisation",
+  
+  # Dimensions physiques
+  "moullumheight", "moulpiedheight", "beamheight", "cabtallheightalign",
+  "longcomptoir", "surfacecomptoir", "nbcomptoir",
+  "portemodelebepais", "portemodelefacadebepais", "portemodelehepais",
+  
+  # Quantités
+  "qte", "qtetr", "nokititem",
+  
+  # Finances
+  "costmatcumul", "costmocumul", "pricematcumul", "pricemocumul", "gtot", "costfgfcumul",
+  
+  # Flags
+  "enerreur", "estextra", "estprixadmin", "abomcustom", "couleurestbois",
+  "patteachetee", "estbloqprix", "cacheneon",
+  
+  # Totaux / cumuls
+  "soustotalkit", "soustotalcab", "soustotaleff", "soustotalmoulure",
+  "soustotalpanel", "totalcomptoir", "soustotalkiteff", "soustotalautre",
+  "totalcomptoireff", "extracomptoir"
+)
+
+kits <- kits |> select(all_of(variables_tendances))
+kits |> str()
+
+
+```
+
+## etapes
+
+```{r}
+etapes <-  bind_rows(TableCommandesNettoyees$Etape,TableContratsNettoyees$Etape)
+
+etapes <- etapes |> mutate(
+  across(c("createur","emplacement","statut","commandes","contrats"),as.factor),
+  across(c("datecreation","tempscreation"), ~ ymd(., quiet = TRUE))
+  )
+
+save(documents,file = "../data/transformed/etapes.RData")
+
+etapes |> str()
+```
+
+## projets( projets & adressses )
+
+```{r}
+
+projets <- TableProjetsNettoyees$Projet
+
+projets <- inner_join(projets, TableProjetsNettoyees$AdrCivique, by = c("code" = "projets"),suffix = c(x="projet",y="addresse")) |> mutate(projets=NULL) # reconstituons la table projets 
+
+projets <- projets |> 
+  mutate(
+    # Dates
+    datecreation = ymd(datecreation),
+    
+    # Facteurs
+    across(c(marche, division, statutjobsite, sorteprojet, usage,
+             etatprov, region, ville, pays, sorteaddresse), as.factor),
+    
+    # Logiques (booléens)
+    across(c(enfusion, sauvegarde), as.logical),
+    
+    # Caractères
+    across(c(code, codepost, codeaddresse,
+             starts_with("courriel"),
+             starts_with("telephone"),
+             starts_with("coords"),
+             starts_with("nom"),
+             starts_with("prenom"),
+             starts_with("client"),
+             starts_with("contact"),
+             commentaires), as.character)
+  )
+
+
+projets |> str()
+```
+
+# Gestion des valeurs manquantes (NA)
+
+```{r}
+library(naniar) # 
+```
+
+## documents
+
+#### variables quantitatives
+
+```{r}
+varQuantitatives <- documents |> select(where(is.numeric))
+varQuantitatives |> vis_miss()
+
+```
+
+##### solutions :
+
+-   Imputation des valeurs manquantes par KNN :
+
+Estimer la valeur manquante à partir des valeurs correspondantes chez ces voisins : - Pour une variable quantitative : en général la moyenne ou la médiane des valeurs des k voisins.
+
+```{r}
+library(VIM)
+
+# Imputation KNN (par défaut k = 5)
+varQuantitatives <- kNN(varQuantitatives,k=5,imp_var = FALSE)
+
+varQuantitatives <- varQuantitatives[,names(varQuantitatives)]
+
+varQuantitatives|> vis_miss()
+varQuantitatives |> questionr::look_for()
+
+```
+
+#### variables qualitatives
+
+```{r}
+varQualitatives <- documents |> select(where(is.factor))
+varQualitatives |> vis_miss()
+
+```
+
+##### solutions
+
+-   Création d'une nouvelle catégorie : Remplacer les valeurs manquantes par la valeur la plus fréquente (le mode).
+
+```{r}
+varQualitatives <- varQualitatives |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+
+```
+
+```{r}
+
+# mise à jour des données commandes
+
+documents <- documents |>
+  mutate(across(all_of(names(varQuantitatives)), ~ varQuantitatives[[cur_column()]])) |>
+  mutate(across(all_of(names(varQualitatives)), ~ varQualitatives[[cur_column()]]))
+
+
+save(documents,file = "../data/transformed/documents.RData")
+# mise à de table documents
+```
+
+## kits
+
+### variables quantitatives
+
+```{r}
+varQuantitativesKits <- kits |> select(where(is.numeric)) 
+
+varQuantitativesKits |> vis_miss()
+
+```
+
+##### solutions :
+
+-   Imputation des valeurs manquantes par KNN :
+
+Estimer la valeur manquante à partir des valeurs correspondantes chez ces voisins : - Pour une variable quantitative : en général la moyenne ou la médiane des valeurs des k voisins.
+
+```{r}
+library(VIM)
+
+# Imputation KNN (par défaut k = 5)
+varQuantitativesKits <- kNN(varQuantitativesKits,k=5,imp_var = FALSE)
+
+varQuantitativesKits <- varQuantitativesKits[,names(varQuantitativesKits)]
+
+varQuantitativesKits|> vis_miss()
+varQuantitativesKits |> questionr::look_for()
+
+```
+
+#### variables qualitatives
+
+```{r}
+varQualitativesKits <- kits |> select(where(is.factor))
+varQualitativesKits |> vis_miss()
+
+```
+
+##### solutions
+
+-   Création d'une nouvelle catégorie : Remplacer les valeurs manquantes par la valeur la plus fréquente (le mode).
+
+```{r}
+varQualitativesKits <- varQualitativesKits |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+
+```
+
+```{r}
+
+# mise à jour des données commandes
+
+kits <- kits |>
+  mutate(across(all_of(names(varQuantitativesKits)), ~ varQuantitativesKits[[cur_column()]])) |>
+  mutate(across(all_of(names(varQualitativesKits)), ~ varQualitativesKits[[cur_column()]]))
+
+
+save(kits,file = "../data/transformed/kits.RData")
+# mise à de table documents
+```
+
+## projets
+
+```{r}
+
+projets |> select(where(is.factor)) |> vis_miss()
+
+projets <- projets |>select(where(is.factor)) |> mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+
+projets |> vis_miss()
+
+save(projets,file = "../data/transformed/projets.RData")
+
+```

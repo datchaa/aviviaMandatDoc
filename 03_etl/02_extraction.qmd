@@ -1,0 +1,8 @@
+---
+title: "Étapes d’extraction des données (sources internes/externes)"
+format: html
+---
+
+# 
+Étapes d’extraction des données (sources internes/externes)
+

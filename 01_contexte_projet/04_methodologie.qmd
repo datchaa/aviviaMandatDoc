@@ -1,0 +1,8 @@
+---
+title: "Méthodologie de travail adoptée (ex : CRISP-DM)"
+format: html
+---
+
+# 
+
+Méthodologie de travail adoptée (ex : CRISP-DM)

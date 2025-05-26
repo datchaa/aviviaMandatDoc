@@ -1,0 +1,316 @@
+---
+title: " description et nettoyage commandes"
+format: html
+---
+
+# Prévisualation de la table commandes
+
+```{r}
+library(tidyverse)
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+
+commandes <- commandes$Comm 
+commandes |> glimpse()
+
+```
+
+# Nettoyage et transformation
+
+```{r}
+# cleaned fuctions
+dropColunmSpecialChr <- function(tbl){
+   tbl <- tbl |> rename_with(~ gsub("[^A-Za-z0-9]", "", .)) 
+}
+castColunmToLower <- function(tbl){
+  tbl <- tbl |> rename_with(~tolower(.))
+}
+cleanEmpytColumn <- function(tbl){
+  df_clean <- tbl |> select_if(~!all(is.na(.)))
+  df_clean
+}
+cleanDuplicateRows <- function(tbl){
+  df_clean <- tbl |> distinct()
+}
+cleanSpecialChar <- function(x){
+   if (is.character(x) || is.factor(x)) {
+    x <- as.character(x)|>
+      # Supprimer tous les caractères spéciaux sauf lettres, chiffres, espaces et certains caractères utiles
+      str_replace_all("[^[:alnum:] ,._-", "")|>
+      
+      # Remplacer les espaces multiples par un seul espace
+      str_squish()|>
+      # Convertir les chaînes vides en NA
+      na_if("")
+   }
+  
+  return(x)
+}
+
+
+commandes <- commandes |> 
+  dropColunmSpecialChr() |>
+  castColunmToLower() |>
+  cleanEmpytColumn() |>
+  cleanDuplicateRows() |>
+  cleanSpecialChar()
+
+
+# nettoyage
+commandes <- commandes |> mutate(pourcentageAcompte1 = str_extract(acompte1, "\\d{2}%$"),
+                                 pourcentageAcompte2 = str_extract(acompte2,"\\d{2}%$"),
+                                 acompte1 = str_replace(acompte1, "\\d{2}%$", ""),
+                                 acompte2 =  str_replace(acompte2, "\\d{2}%$", "")) # creation de colonnes pourcentage pour chaque acompte
+
+commandes <- commandes |>
+  mutate(
+    estPsd = ifelse(total == "PSD","true","false") ,  # 1. Créer la colonne estPsd (TRUE/FALSE si total == "PSD") 
+    across(everything(), ~ ifelse(. == "PSD", 0, .)), # 2. Remplacer "PSD" par 0 dans TOUTES les colonnes
+    prisemesure = gsub("priseDeMesure", "", prisemesure),
+    # nettoyage prisedemesure 
+    aveclivraison = gsub("true|false","", aveclivraison),
+    aveclivraison = ifelse(aveclivraison == "1","true","false"),
+    assemblage = ifelse(assemblage == "Assemble","true","false"),
+    pourcentageAcompte1 = gsub("%","",pourcentageAcompte1),
+    pourcentageAcompte2 = gsub("%","",pourcentageAcompte2),
+    nbjourvalide = gsub("true","",nbjourvalide),
+    typeclient = gsub("true|false", "", typeclient),
+    sorte = ifelse(sorte == "Comm","Commande",sorte),
+    # garder que deux valeurs possible TRUE ouFALSE
+    ) |> 
+   mutate(across(
+    .cols = starts_with(c("date","pourc","nbjour")),
+    .fns = ~ str_remove_all(., "[A-Za-z]")  # Supprime toutes les lettres variable dates
+  ))
+
+ 
+  
+ 
+# selectionner des variables pertinantes et convertions dans les types approprié pour analyse
+ 
+vars_utiles <- c(
+  
+  # Informations client / projet
+  "nomclient", "projet", "typeclient", "roleproprietaire", "validcred",
+  
+  
+ # autre
+ "code","sorte", 
+ 
+
+   # Dates importantes
+  "datevalidite", "datedebvalidite", "datecreation", "datereqexped", 
+  "dateprevexped", "datelivraisoninstall","dateacompte1emis", "dateacompte1recep", "dateacompte2emis", "dateacompte2recep",
+
+  
+  # Localisation et durée
+  "emplacementcre", "nbjourvalide",  
+
+  # Données logistiques et produits
+  "qteitems", "qteitemscab", "ligne", "aveclivraison", "avertlivraison",
+  "codepost", "codepostfinal", "installation", "prisemesure", "assemblage", 
+  "edgecolle", "gamme", "cleitem", "lumieres", "type", "typeprocess", "estPsd",
+
+
+
+  # Références administratives
+  "division", "codetaxe", "codetaxe2",
+   # Informations sur les acomptes
+  "acompte1", "acompte2", "pourcentageAcompte1", "pourcentageAcompte2",
+  "totalescompte",
+
+  # Données financières
+  "pourcesc", "soustotal", "tauxtaxe", "tauxtaxe2", 
+  "totaltx1", "totaltx2", "totalesc","totalht","total","solde"
+
+
+ 
+)
+
+commandes <- commandes |> select(all_of(vars_utiles)) |> relocate(vars_utiles)
+
+
+#
+commandes <-  commandes |>
+  
+  # 1. Conversion des dates (silencieuse)
+  mutate(across(
+    c(datevalidite, datedebvalidite, datecreation, datereqexped, 
+      dateprevexped, datelivraisoninstall,dateacompte1emis, dateacompte1recep, dateacompte2emis, dateacompte2recep),
+    ~ ymd(., quiet = TRUE)
+  )) |>
+  
+  # 2. Conversion numérique avec nettoyage
+  mutate(across(
+    c(acompte1, acompte2, pourcentageAcompte1, pourcentageAcompte2, totalescompte,
+      solde, pourcesc, soustotal, tauxtaxe, tauxtaxe2, total, totalht, 
+      totaltx1, totaltx2),
+    ~ as.integer(gsub("[^0-9.-]", "", .))
+  )) |> mutate(pourcentageAcompte1 = pourcentageAcompte1 / 100 ,
+               pourcentageAcompte2 = pourcentageAcompte2 / 100,
+               pourcesc = pourcesc / 100
+               ) |>
+  
+  # 3. Conversion en entiers
+  mutate(across(
+    c(qteitems, qteitemscab, nbjourvalide, cleitem),
+    ~ as.integer(.)
+  )) |>
+  
+  # 4. Conversion en logique (TRUE/FALSE/NA)
+  mutate(across(
+    c(aveclivraison, estPsd , installation, 
+      prisemesure, assemblage, validcred),
+    ~ as.logical(case_when(
+      . %in% c("1", "true", "vrai", "o") ~ TRUE,
+      . %in% c("0", "false", "faux", "n") ~ FALSE,
+      TRUE ~ NA
+    ))
+  )) |>
+  
+  # 5. Conversion en facteurs
+  mutate(across(
+    c(nomclient, projet, typeclient, roleproprietaire, 
+      codepost, codepostfinal, edgecolle, gamme, lumieres, type, typeprocess,avertlivraison,
+      emplacementcre, division, codetaxe, codetaxe2, ligne, code),
+    as.factor
+  ))
+
+
+# 
+
+commandes |> str()
+
+  
+```
+
+# Gestion des valeurs manquantes (NA)
+
+```{r}
+library(naniar) # 
+```
+
+## commandes
+
+#### variables quantitatives
+
+```{r}
+varQuantitatives <- commandes |> select(where(is.numeric))
+varQuantitatives |> vis_miss()
+
+```
+
+##### solutions :
+
+-   Imputation des valeurs manquantes par KNN :
+
+Estimer la valeur manquante à partir des valeurs correspondantes chez ces voisins : - Pour une variable quantitative : en général la moyenne ou la médiane des valeurs des k voisins.
+
+```{r}
+library(VIM)
+
+# Imputation KNN (par défaut k = 5)
+varQuantitatives <- kNN(varQuantitatives,k=5,imp_var = FALSE)
+varQuantitatives <- varQuantitatives[,names(varQuantitatives)]
+varQuantitatives|> vis_miss()
+
+```
+
+#### variables qualitatives
+
+```{r}
+varQualitatives <- commandes |> select(where(is.factor))
+varQualitatives |> vis_miss()
+
+```
+
+##### solution
+
+-   Création d'une nouvelle catégorie : elle consiste à remplacé les valeurs manquantes par une nouvelle modalité (catégorie). Cette nouvelle modalité indique explicitement que la donnée était absente.
+
+```{r}
+varQualitatives <- varQualitatives |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+```
+
+#### variables catégorielle binaires
+
+```{r}
+varsLogical <- commandes |> select(where(is.logical))
+
+varsLogical |> vis_miss()
+
+```
+
+##### solution
+
+-   Remplacer p rar la valeur la plus fréquente de chaque variables (le mode)
+
+```{r}
+library(dplyr)
+
+varsLogical <- varsLogical |>
+  mutate(across(
+    everything(),
+    ~ {
+      mode_value <- names(sort(table(.), decreasing = TRUE))[1]
+      replace(., is.na(.), mode_value)
+    }
+  ))
+
+
+varsLogical |> vis_miss()
+
+
+
+```
+
+#### Données de type temporelles
+
+```{r}
+dates <- commandes |>select(where(lubridate::is.Date))
+dates |> vis_miss()
+```
+
+##### solution
+
+-   Supprimer les variables avec plus 50 % de données manquantes
+
+```{r}
+library(dplyr)
+
+# Ajouter la parenthèse manquante
+dates <- dates |>
+  select(where(~ mean(is.na(.x)) <= 0.5))
+
+# Puis visualiser
+dates |> vis_miss()
+
+
+```
+
+# Sauvegarde des données nettoyées et transformées
+
+```{r}
+
+# mise à jour des données commandes
+
+commandes <- commandes |>
+  mutate(across(all_of(names(varQuantitatives)), ~ varQuantitatives[[cur_column()]])) |>
+  mutate(across(all_of(names(varQualitatives)), ~ varQualitatives[[cur_column()]])) |>
+  mutate(across(all_of(names(varsLogical)), ~ varsLogical[[cur_column()]])) |>
+  mutate(across(all_of(names(dates)), ~ dates[[cur_column()]])) 
+
+# Avec dplyr (recommandé)
+commandes <- commandes |>
+  select(where(~ mean(is.na(.x)) <= 0.5))
+
+save(commandes,file = "../data/transformed/commandes.RData")
+
+commandes |> glimpse()
+commandes |> vis_miss() 
+# mise à de table commandes
+```

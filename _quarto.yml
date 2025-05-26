@@ -1,6 +1,11 @@
 project:
   type: book
 
+execute:                # ← CORRECT : doit être ici, en haut niveau
+  echo: false
+  warning: false
+  message: false
+
 book:
   favicon: public/images/logo_dunin.png
   title: "Mandat dunin "
@@ -8,19 +13,48 @@ book:
   date: "2025-05-12"
   chapters:
     - index.qmd
-    - part: "Contexte et projet"
+    - part: "1. Contexte et Projet"
       chapters:
-        - 01_project_context/index.qmd
-    - part: "Analyse exploratoire des données (EDA)  "
+        - 01_contexte_projet/01_contexte_metier.qmd
+        - 01_contexte_projet/03_sources_donnees.qmd
+
+    - part: "2. Collecte et Préparation des Données "
       chapters:
-          - 03_eda/data_wrangling.qmd
-          - 03_eda/descriptive_statistics/orders.qmd 
-      
+        - 02_eda/nettoyage_commandes.qmd
+        - 02_eda/nettoyage_contrats.qmd
+        - 02_eda/nettoyage_kits.qmd
+        - 02_eda/nettoyage_projets.qmd
+        - 02_eda/nettoyage_etapes.qmd
+        - 02_eda/dictionnaire_de_donnee_provisoire.qmd 
+    
+    - part: "3. Analyses "
+      chapters:
+        - 02_eda/02_statistiques_descriptives.qmd
+        - 04_analyse_avancee/02_techniques_analyse.qmd
+        - 04_analyse_avancee/03_evaluation_modeles.qmd
+        - 04_analyse_avancee/04_interpretation.qmd
+        
+    - part: "4. Modélisation et Mise en Œuvre du Processus ETL"
+      chapters:
+        - 03_etl/01_schema_architecture.qmd
+        - 03_etl/02_extraction.qmd
+        - 03_etl/03_transformation.qmd
+        - 03_etl/04_chargement.qmd
+        - 03_etl/05_outils.qmd
+    
+
+    - part: "5. Mise en Œuvre des Tableaux de Bord"
+      chapters:
+        - 05_tableaux_bord/01_kpi.qmd
+        - 05_tableaux_bord/02_conception_visualisations.qmd
+        - 05_tableaux_bord/03_realisation.qmd
+        - 05_tableaux_bord/04_scenarios_usage.qmd
   sidebar: 
     border: true
     logo: public/images/logo_dunin.png     
 
 bibliography: references.bib
+
 format:
   html:
     theme:

@@ -1,0 +1,8 @@
+---
+title: "Outils utilisés (ex : SQL, Python, Airflow, Talend...)"
+format: html
+---
+
+# 
+Outils utilisés (ex : SQL, Python, Airflow, Talend...)
+

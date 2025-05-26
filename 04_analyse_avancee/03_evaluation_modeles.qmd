@@ -1,0 +1,8 @@
+---
+title: "Évaluation et validation des modèles"
+format: html
+---
+
+# 
+Évaluation et validation des modèles
+

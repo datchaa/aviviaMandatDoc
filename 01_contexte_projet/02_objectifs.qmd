@@ -1,0 +1,22 @@
+---
+title: "Définition des objectifs du projet"
+format: html
+---
+
+# Définition des objectifs du projet
+
+Mettre en place une solution d'analyse automatisée des données de vente afin d'identifier les tendances clés et les opportunités d'amélioration de la performance commerciale.
+
+# Méthodologie
+
+la méthodologie de gestion de projet choisie pour ce projet est le : scrum .
+
+Équipe et parties prenantes
+
+Datcha simon-pierre Beugré : Consultant
+
+Marc André : Encadreur , product owner
+
+# Durée ( 6 semaines )
+
+du 15 mars au 29 avril 2025

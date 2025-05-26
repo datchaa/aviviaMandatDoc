@@ -1,0 +1,79 @@
+---
+title: "Analyses descriptives "
+format: html
+---
+
+# Analyses descriptives
+
+```{r}
+ 
+library(tidyverse)
+library(echarts4r)
+library(gtsummary)
+library(psych)
+theme_gtsummary_language("fr", decimal.mark = ',')
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/contrats.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/contrats.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/commandes.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/etapes.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/kits.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/projets.RData")
+
+
+ventes <- bind_rows(commandes,contrats)
+
+```
+
+### Objectifs :
+
+-   identifier les profils types, répartitions et comportements clients
+
+-   comprendre la répartition géographique des clients pour Optimiser la logistique et identifier les zones à fortes demandes .
+
+<!-- -->
+
+-   Évaluer le chiffre d’affaires, la rentabilité et les dynamiques de vente.
+
+-   Identifier les cycles de vente et les périodes de forte activité.
+
+-   détecter des tendances dans le temps
+
+-   Détection d’Anomalies
+
+## identifier les profils types, répartitions et comportements clients
+
+```{r}
+
+# Créer le tableau de fréquences et le convertir en data.frame
+typesClientn_df <- as.data.frame(table(ventes$typeclient))
+names(typesClientn_df) <- c("typeclient", "nombre")
+
+# Trier par ordre croissant
+typesClientn_df <- typesClientn_df |> arrange(nombre)
+
+# Créer le graphique avec labels
+typesClientn_df |>
+  e_charts(typeclient) |>
+  e_bar(nombre) |>
+  e_tooltip(trigger = "axis") |>
+  e_labels(
+    "nombre",
+    position = "top"
+  ) |> e_x_axis(axisLabel = list(fontSize = 10))
+
+```
+
+### classement des clients par nombres de transactions effectués
+
+```{r}
+e <- ventes |> group_by(sorte) |> select(nomclient) |> table() |> as.tibble() 
+# Créer le graphique
+
+e %>% group_by(sorte) |>
+  e_charts(nomclient) %>%
+  e_bar(n, stack = "grp") |>e_flip_coords()  %>% e_tooltip() |>e_legend(left = "20%", show = TRUE) |>
+   e_y_axis(name = "clients") %>%
+  e_x_axis(name = "transactions")
+
+```

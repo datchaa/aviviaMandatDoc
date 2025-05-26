@@ -1,0 +1,105 @@
+---
+title: "description et nettoyage etapes"
+format: html
+---
+
+# Prévisualation de la table etapes
+
+```{r}
+library(tidyverse)
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
+
+etapes <-  bind_rows(commandes$Etape,contrats$Etape)
+
+etapes |> glimpse()
+
+```
+
+# Nettoyage et transformation
+
+```{r}
+# cleaned fuctions
+dropColunmSpecialChr <- function(tbl){
+   tbl <- tbl |> rename_with(~ gsub("[^A-Za-z0-9]", "", .)) 
+}
+castColunmToLower <- function(tbl){
+  tbl <- tbl |> rename_with(~tolower(.))
+}
+cleanEmpytColumn <- function(tbl){
+  df_clean <- tbl |> select_if(~!all(is.na(.)))
+  df_clean
+}
+cleanDuplicateRows <- function(tbl){
+  df_clean <- tbl |> distinct()
+}
+cleanSpecialChar <- function(x){
+   if (is.character(x) || is.factor(x)) {
+    x <- as.character(x)|>
+      # Supprimer tous les caractères spéciaux sauf lettres, chiffres, espaces et certains caractères utiles
+      str_replace_all("[^[:alnum:] ,._-", "")|>
+      
+      # Remplacer les espaces multiples par un seul espace
+      str_squish()|>
+      # Convertir les chaînes vides en NA
+      na_if("")
+   }
+  
+  return(x)
+}
+
+
+etapes <- etapes |> 
+  dropColunmSpecialChr() |>
+  castColunmToLower() |>
+  cleanEmpytColumn() |>
+  cleanDuplicateRows() |>
+  cleanSpecialChar()
+
+
+
+etapes <- etapes |> mutate(across(everything(),as.factor))
+ 
+etapes |> str()
+
+  
+```
+
+# Gestion des valeurs manquantes (NA)
+
+```{r}
+library(naniar) # 
+```
+
+#### variables qualitatives
+
+```{r}
+varQualitatives <- etapes |> select(where(is.factor))
+varQualitatives |> vis_miss()
+
+```
+
+##### solution
+
+-   Création d'une nouvelle catégorie : elle consiste à remplacé les valeurs manquantes par une nouvelle modalité (catégorie). Cette nouvelle modalité indique explicitement que la donnée était absente.
+
+```{r}
+varQualitatives <- varQualitatives |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+varQualitatives |> vis_miss()
+
+```
+
+# Sauvegarde des données nettoyées et transformées
+
+```{r}
+
+save(etapes,file = "../data/transformed/etapes.RData")
+
+
+# mise à de table contrats
+```

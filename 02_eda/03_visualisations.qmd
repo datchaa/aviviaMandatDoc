@@ -1,0 +1,8 @@
+---
+title: "Visualisations initiales pour identifier les tendances et anomalies"
+format: html
+---
+
+# 
+Visualisations initiales pour identifier les tendances et anomalies
+

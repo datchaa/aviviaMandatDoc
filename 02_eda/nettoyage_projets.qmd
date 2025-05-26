@@ -1,0 +1,189 @@
+---
+title: " description et nettoyage projets"
+format: html
+---
+
+# Prévisualation de la table projets
+
+```{r}
+library(tidyverse)
+
+load("C:/Users/datch/Desktop/aviviaMandatDoc/data/projets.RData")
+
+
+
+addresses <- projets$AdrCivique
+
+projets <- projets$Projet
+
+```
+
+# Nettoyage et transformation
+
+```{r}
+# cleaned fuctions
+dropColunmSpecialChr <- function(tbl){
+   tbl <- tbl |> rename_with(~ gsub("[^A-Za-z0-9]", "", .)) 
+}
+castColunmToLower <- function(tbl){
+  tbl <- tbl |> rename_with(~tolower(.))
+}
+cleanEmpytColumn <- function(tbl){
+  df_clean <- tbl |> select_if(~!all(is.na(.)))
+  df_clean
+}
+cleanDuplicateRows <- function(tbl){
+  df_clean <- tbl |> distinct()
+}
+cleanSpecialChar <- function(x){
+   if (is.character(x) || is.factor(x)) {
+    x <- as.character(x)|>
+      # Supprimer tous les caractères spéciaux sauf lettres, chiffres, espaces et certains caractères utiles
+      str_replace_all("[^[:alnum:] ,._-", "")|>
+      
+      # Remplacer les espaces multiples par un seul espace
+      str_squish()|>
+      # Convertir les chaînes vides en NA
+      na_if("")
+   }
+  
+  return(x)
+}
+
+
+projets <- projets |> 
+  dropColunmSpecialChr() |>
+  castColunmToLower() |>
+  cleanEmpytColumn() |>
+  cleanDuplicateRows() |>
+  cleanSpecialChar()
+
+addresses <- addresses |> 
+  dropColunmSpecialChr() |>
+  castColunmToLower() |>
+  cleanEmpytColumn() |>
+  cleanDuplicateRows() |>
+  cleanSpecialChar()
+
+
+projets <- inner_join(projets,addresses, by = c("code" = "projets"),suffix = c(x="projet",y="addresse")) |> mutate(projets=NULL) # r
+
+projets |> glimpse()
+
+projets <- projets |> 
+  mutate(
+    # Dates
+    datecreation = ymd(datecreation),
+    
+    # Facteurs
+    across(c(marche, division, statutjobsite, sorteprojet, usage,
+             etatprov, region, ville, pays, sorteaddresse), as.factor),
+    
+    # Logiques (booléens)
+    across(c(enfusion, sauvegarde), as.logical),
+    
+    # Caractères
+    across(c(code, codepost, codeaddresse,
+             starts_with("courriel"),
+             starts_with("telephone"),
+             starts_with("coords"),
+             starts_with("nom"),
+             starts_with("prenom"),
+             starts_with("client"),
+             starts_with("contact"),
+             commentaires), as.character)
+  )
+
+# 
+
+projets <-  projets |> select(-where(is.character))
+projets |> str()
+
+  
+```
+
+# Gestion des valeurs manquantes (NA)
+
+```{r}
+library(naniar) # 
+```
+
+## projets
+
+#### variables qualitatives
+
+```{r}
+varQualitatives <- projets |> select(where(is.factor))
+varQualitatives |> vis_miss()
+
+```
+
+##### solution
+
+-   Création d'une nouvelle catégorie : elle consiste à remplacé les valeurs manquantes par une nouvelle modalité (catégorie). Cette nouvelle modalité indique explicitement que la donnée était absente.
+
+```{r}
+varQualitatives <- varQualitatives |>
+  mutate(across(
+    everything(),
+    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+  ))
+varQualitatives |> vis_miss()
+
+```
+
+#### variables catégorielle binaires
+
+```{r}
+varsLogical <- projets |> select(where(is.logical))
+
+varsLogical |> vis_miss()
+
+```
+
+##### solution
+
+-   Remplacer p rar la valeur la plus fréquente de chaque variables (le mode)
+
+```{r}
+library(dplyr)
+
+varsLogical <- varsLogical |>
+  mutate(across(
+    everything(),
+    ~ {
+      mode_value <- names(sort(table(.), decreasing = TRUE))[1]
+      replace(., is.na(.), mode_value)
+    }
+  ))
+
+
+varsLogical |> vis_miss()
+
+
+
+```
+
+#### Données de type temporelles
+
+```{r}
+dates <- projets |>select(where(lubridate::is.Date))
+dates |> vis_miss()
+```
+
+# Sauvegarde des données nettoyées et transformées
+
+```{r}
+# mise à jour des données projets
+
+projets <- projets |>
+  mutate(across(all_of(names(varQualitatives)), ~ varQualitatives[[cur_column()]])) |>
+  mutate(across(all_of(names(varsLogical)), ~ varsLogical[[cur_column()]])) 
+# Avec dplyr (recommandé)
+
+save(projets,file = "../data/transformed/projets.RData")
+
+projets |> glimpse()
+projets |> vis_miss() 
+# mise à de table projets
+```
