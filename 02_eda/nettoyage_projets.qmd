@@ -66,9 +66,32 @@ addresses <- addresses |>
   cleanSpecialChar()
 
 
+
+
+addresses <- addresses %>%
+  mutate(
+    pays = case_when(
+      # Conversion des codes pays
+      pays == "CA" ~ "Canada",
+      # Ajoutez d'autres codes pays au besoin
+      
+      # Suppression des valeurs numériques pures (ex: "123")
+      grepl("^[0-9]+$", pays) ~ NA_character_,
+      
+      # Suppression des numéros de téléphone (ex: "514-303-6787")
+      grepl("\\d{3}[-.]?\\d{3}[-.]?\\d{4}", pays) ~ NA_character_,
+      
+      # Conserve les autres valeurs non modifiées
+      TRUE ~ pays
+    )
+  )
+
 projets <- inner_join(projets,addresses, by = c("code" = "projets"),suffix = c(x="projet",y="addresse")) |> mutate(projets=NULL) # r
 
 projets |> glimpse()
+
+
+
 
 projets <- projets |> 
   mutate(
@@ -77,8 +100,12 @@ projets <- projets |>
     
     # Facteurs
     across(c(marche, division, statutjobsite, sorteprojet, usage,
-             etatprov, region, ville, pays, sorteaddresse), as.factor),
-    
+             etatprov, region, ville, pays, sorteaddresse), ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      x <- tolower(x)
+      factor(x)
+    }),
     # Logiques (booléens)
     across(c(enfusion, sauvegarde), as.logical),
     
@@ -91,12 +118,20 @@ projets <- projets |>
              starts_with("prenom"),
              starts_with("client"),
              starts_with("contact"),
-             commentaires), as.character)
+             commentaires), ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      x <- tolower(x)
+      factor(x)
+    } )
   )
 
 # 
 
-projets <-  projets |> select(-where(is.character))
+
+projets <-  projets |> select(-where(is.character)) 
+
+
 projets |> str()
 
   
@@ -126,7 +161,7 @@ varQualitatives |> vis_miss()
 varQualitatives <- varQualitatives |>
   mutate(across(
     everything(),
-    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+    ~ fct_na_value_to_level(as.factor(.), level = "manquant")
   ))
 varQualitatives |> vis_miss()
 

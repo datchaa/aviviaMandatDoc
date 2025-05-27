@@ -3,7 +3,7 @@ title: " description et nettoyage commandes"
 format: html
 ---
 
-# Prévisualation de la table commandes
+#   Prévisualation de la table commandes
 
 ```{r}
 library(tidyverse)
@@ -173,7 +173,12 @@ commandes <-  commandes |>
     c(nomclient, projet, typeclient, roleproprietaire, 
       codepost, codepostfinal, edgecolle, gamme, lumieres, type, typeprocess,avertlivraison,
       emplacementcre, division, codetaxe, codetaxe2, ligne, code),
-    as.factor
+    ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      x <- tolower(x)
+      factor(x)
+    }
   ))
 
 
@@ -232,7 +237,7 @@ varQualitatives |> vis_miss()
 varQualitatives <- varQualitatives |>
   mutate(across(
     everything(),
-    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+    ~ fct_na_value_to_level(as.factor(.), level = "manquant")
   ))
 ```
 

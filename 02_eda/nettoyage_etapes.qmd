@@ -59,7 +59,12 @@ etapes <- etapes |>
 
 
 
-etapes <- etapes |> mutate(across(everything(),as.factor))
+etapes <- etapes |> mutate(across(everything(),~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      x <- tolower(x)
+      factor(x)
+    }))
  
 etapes |> str()
 
@@ -88,7 +93,7 @@ varQualitatives |> vis_miss()
 varQualitatives <- varQualitatives |>
   mutate(across(
     everything(),
-    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+    ~ fct_na_value_to_level(as.factor(.), level = "manquant")
   ))
 varQualitatives |> vis_miss()
 

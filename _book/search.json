@@ -633,5 +633,16 @@
       "3. Analyses ",
       "<span class='chapter-number'>9</span>  <span class='chapter-title'>Analyses descriptives</span>"
     ]
+  },
+  {
+    "objectID": "02_eda/02_statistiques_descriptives.html#objectifs",
+    "href": "02_eda/02_statistiques_descriptives.html#objectifs",
+    "title": "9  Analyses descriptives",
+    "section": "10.1 Objectifs :",
+    "text": "10.1 Objectifs :\n\nidentifier les profils types, répartitions et comportements clients\ncomprendre la répartition géographique des clients pour Optimiser la logistique et identifier les zones à fortes demandes .\nÉvaluer le chiffre d’affaires, la rentabilité et les dynamiques de vente.\nIdentifier les cycles de vente et les périodes de forte activité.\ndétecter des tendances dans le temps\nDétection d’Anomalies\n\n\n10.1.1 identifier les profils types, répartitions et comportements clients\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n10.1.1.1 Répartition des clients par pays",
+    "crumbs": [
+      "3. Analyses ",
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Analyses descriptives</span>"
+    ]
   }
 ]

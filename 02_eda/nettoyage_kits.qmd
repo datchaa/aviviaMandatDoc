@@ -7,7 +7,7 @@ format: html
 
 ```{r}
 library(tidyverse)
-
+library(bit64)
 load("C:/Users/datch/Desktop/aviviaMandatDoc/data/commandes.RData")
 load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
 
@@ -89,6 +89,7 @@ kits <- kits |> mutate(
     ~ {
       x <- gsub("true|false", "", .) 
       x <- str_squish(x)
+      x <- tolower(x)
       factor(x)
     }
   ),
@@ -115,7 +116,7 @@ kits <- kits |> mutate(
     ~ {
       x <- gsub("[A-Za-z]", "", .)     # Supprime toutes les lettres (ex : "9true" -> "9")
       x <- ifelse(x == "", NA, x)      # Remplace chaînes vides par NA
-      as.numeric(x)
+      as.integer64(x)
     }
   )
 )
@@ -211,7 +212,7 @@ varQualitativesKits |> vis_miss()
 varQualitativesKits <- varQualitativesKits |>
   mutate(across(
     everything(),
-    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+    ~ fct_na_value_to_level(as.factor(.), level = "manquant")
   ))
 
 varQualitativesKits |> vis_miss()

@@ -1,5 +1,5 @@
 ---
-title: "Analyses descriptives "
+title: "Analyses descriptives"
 format: html
 ---
 
@@ -8,10 +8,11 @@ format: html
 ```{r}
  
 library(tidyverse)
-library(echarts4r)
-library(gtsummary)
-library(psych)
-theme_gtsummary_language("fr", decimal.mark = ',')
+library(plotly)
+library(leaflet)
+library(tidygeocoder)
+library(scales)
+
 
 load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/contrats.RData")
 load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/contrats.RData")
@@ -25,13 +26,11 @@ ventes <- bind_rows(commandes,contrats)
 
 ```
 
-### Objectifs :
+## Objectifs :
 
 -   identifier les profils types, répartitions et comportements clients
 
 -   comprendre la répartition géographique des clients pour Optimiser la logistique et identifier les zones à fortes demandes .
-
-<!-- -->
 
 -   Évaluer le chiffre d’affaires, la rentabilité et les dynamiques de vente.
 
@@ -41,41 +40,152 @@ ventes <- bind_rows(commandes,contrats)
 
 -   Détection d’Anomalies
 
-## identifier les profils types, répartitions et comportements clients
-
-### catégories clients
+### identifier les profils types, répartitions et comportements clients
 
 ```{r}
 
 # Créer le tableau de fréquences et le convertir en data.frame
 typesClientn_df <- as.data.frame(table(ventes$typeclient))
-names(typesClientn_df) <- c("typeclient", "nombre")
+names(typesClientn_df) <- c("typeclient", "volume")
 
 # Trier par ordre croissant
-typesClientn_df <- typesClientn_df |> arrange(nombre)
+typesClientn_df <- typesClientn_df |> arrange(desc(volume))
 
-# Créer le graphique avec labels
-typesClientn_df |>
-  e_charts(typeclient) |>
-  e_bar(nombre) |>
-  e_tooltip(trigger = "axis") |>
-  e_labels(
-    "nombre",
-    position = "top"
-  ) |> e_x_axis(axisLabel = list(fontSize = 10))
+library(ggplot2)
+
+ggplot(typesClientn_df, aes(x = typeclient, y = volume)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  geom_text(aes(label = volume), vjust = -0.5, size = 3) +
+  labs(
+    x = "Catégories",
+    y = "Volume de transactions",
+    title = "Volumes de transactions par type de client"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10)
+  )
+
 
 ```
 
-### classement des clients par nombres de transactions effectués
+```{r}
+
+# Données
+e <- ventes %>%
+  count(sorte, nomclient, name = "n")
+
+# Graphique ggplot2
+p <- ggplot(e, aes(
+  x = n,
+  y = reorder(nomclient, n),
+  fill = sorte,
+  text = paste("Client:", nomclient,
+               "<br>Type:", sorte,
+               "<br>Volume:", n)
+)) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Volume",
+    y = "Clients",
+    fill = "Type",
+    title = "Volume de ventes par client et par type de transaction"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "left")
+
+# Rendre interactif avec tooltip
+ggplotly(p, tooltip = "text")
+
+```
+
+#### Répartition des clients par pays
 
 ```{r}
-e <- ventes |> group_by(sorte) |> select(nomclient) |> table() |> as.tibble() 
-# Créer le graphique
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(forcats)
 
-e %>% group_by(sorte) |>
-  e_charts(nomclient) %>%
-  e_bar(n, stack = "grp") |>e_flip_coords()  %>% e_tooltip() |>e_legend(left = "20%", show = TRUE) |>
-   e_y_axis(name = "clients") %>%
-  e_x_axis(name = "transactions")
+# Calcul des proportions avec arrondi intelligent
+projets %>%
+  count(pays, name = "total_clients") %>%
+  mutate(
+    percent = total_clients / sum(total_clients),
+    pays = fct_reorder(pays, -percent)  # Ordonner par pourcentage décroissant
+  ) %>%
+  # Éviter les petits segments illisibles
+  mutate(pays = fct_lump_n(pays, n = 10, w = percent, other_level = "Autres pays")) %>%
+  
+  ggplot(aes(x = "", y = percent, fill = pays)) +
+  geom_col(width = 1, color = "white") +
+  geom_text(aes(label = paste0(
+              round(percent * 100, 1), "%\n", 
+              "(", total_clients, " clients)")),
+            position = position_stack(vjust = 0.5),
+            color = "white",
+            size = 3.5) +
+  coord_polar(theta = "y") +  # Version camembert
+  scale_fill_brewer(palette = "Set3", name = "Pays") +
+  scale_y_continuous(labels = percent_format()) +
+  labs(
+    title = "Répartition des clients par pays",
+    subtitle = "Avec pourcentage et nombre absolu de clients",
+    x = NULL,
+    y = NULL
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_blank(),
+    panel.grid = element_blank(),
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    plot.subtitle = element_text(hjust = 0.5, color = "gray50"),
+    legend.position = "right"
+  )
+
+
+
+```
+
+
+carte interactive
+```{r}
+library(dplyr)
+library(leaflet)
+library(tidygeocoder)
+
+# 1. Regrouper les données pour calculer le nombre de clients par ville et pays
+plot_data <- projets %>%
+  count(ville, pays, name = "nb_clients") %>%
+  mutate(adresse = paste(ville, pays, sep = ", "))
+
+# 2. Géocoder les villes avec tidygeocoder (OpenStreetMap)
+geo_data <- plot_data %>%
+  geocode(address = adresse, method = "osm", lat = lat, long = long, limit = 1)
+
+# 3. Palette de couleurs par pays
+pal <- colorFactor("Set2", domain = geo_data$pays)
+
+# 4. Création de la carte interactive
+leaflet(geo_data) %>%
+  addProviderTiles(providers$CartoDB.Positron) %>%
+  addCircleMarkers(
+    lng = ~long,
+    lat = ~lat,
+    radius = ~sqrt(nb_clients) * 2,
+    color = ~pal(pays),
+    stroke = FALSE,
+    fillOpacity = 0.8,
+    label = ~paste0(ville, " (", pays, "): ", nb_clients, " clients")
+  ) %>%
+  addLegend(
+    position = "bottomright",
+    pal = pal,
+    values = ~pays,
+    title = "Pays"
+  )
+
+
 
 ```

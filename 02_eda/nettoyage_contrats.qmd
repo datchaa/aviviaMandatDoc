@@ -1,20 +1,14 @@
 ---
-title: " description et nettoyage contrats"
-format: html
----
-
----
 title: "Description et nettoyage des données de contrats"
 format: html
 ---
 
-# Prévisualisation de la table `contrats`
+# Prévisualisation de la table contrats
 
 ```{r}
 library(tidyverse)
 
 # Chargement des données
-load("C:/Users/datch/Desktop/aviviaMandatDoc/data/transformed/contrats.RData")
 load("C:/Users/datch/Desktop/aviviaMandatDoc/data/contrats.RData")
 
 # Extraction de la table
@@ -133,7 +127,12 @@ contrats <- contrats |>
       codepostfinal, edgecolle, gamme, lumieres, type, typeprocess, 
       avertlivraison, emplacementcre, division, codetaxe, codetaxe2, 
       ligne, code),
-    as.factor
+    ~ {
+      x <- gsub("true|false", "", .) 
+      x <- str_squish(x)
+      x <- tolower(x)
+      factor(x)
+    }
   ))
 
 # Structure finale de la table
@@ -178,7 +177,7 @@ varQualitatives |> vis_miss()
 varQualitatives <- varQualitatives |>
   mutate(across(
     everything(),
-    ~ fct_na_value_to_level(as.factor(.), level = "non_renseigne")
+    ~ fct_na_value_to_level(as.factor(.), level = "manquant")
   ))
 
 varQualitatives |> vis_miss()
@@ -220,7 +219,7 @@ dates <- dates |>
 vis_miss(dates)
 ```
 
-# Sauvegarde des données nettoyées
+## Sauvegarde des données nettoyées
 
 ```{r}
 # Réintégration des jeux de données nettoyés
